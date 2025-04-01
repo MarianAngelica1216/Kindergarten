@@ -1,0 +1,10 @@
+body {
+    background-image: url('../images/bg_farm.png');
+
+        background: #fafafa;
+        background-repeat: no-repeat;
+        justify-content: flex-start; /* Aligns content to the top */
+        background-size: cover; /* cover ensures the image covers the entire area */
+        font-family: "Fredoka", sans-serif;
+        font-weight: bold;
+      }

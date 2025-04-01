@@ -2,18 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Infinite Carousel (Smooth Fade-Out)</title>
-  <link rel="stylesheet" href="homestyle.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cubao Elementary Kindergarten</title>
+  <link rel="stylesheet" href="css/homestyle.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body style="background-image: url('images/bg.png');">
 
-  <div class = "welcome"> Welcome Kinder Apple! </div>
- 
-
+  <div class="welcome">Welcome Kinder!</div>
+  
   <div class="carousel-container">
     <!-- Navigation Buttons -->
     <button id="prevBtn" class="nav-btn">Prev</button>
@@ -21,89 +20,99 @@
     <!-- Carousel Wrapper -->
     <div class="carousel">
 
+      <!-- ALPHABET -->
+
       <div class="card-wrapper">
-        <div class="shadow-card" style = "background-color:coral;"></div>
-        <div class="card" style = "border-color:coral;border-color:brown;">
-        <div class="card-content"> 
-          <div class="card-image">
-            <img src="1.png" alt="Card Image">
+        <div class="shadow-card" style="background-color: coral;"></div>
+        <div class="card" style="border-color: brown;">
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-alphabet.png" alt="Card Image">
+            </div>
+            <div class="card-title">Alphabet</div>
           </div>
-          <div class="card-title">Card</div>
+          <div class="start-button" style="background-color: coral; color: brown;">Start</div>
         </div>
-        <div class="start-button" style = "background-color:coral;color:brown;">Start</div>
       </div>
-    </div>
 
-    <div class="card-wrapper">
-      <div class="shadow-card" style = "background-color:coral;"></div>
-      <div class="card" style = "border-color:coral;border-color:brown;">
-      <div class="card-content"> 
-        <div class="card-image">
-          <img src="animals.png" alt="Card Image">
-        </div>
-        <div class="card-title">Animals</div>
-      </div>
-      <div class="start-button" style = "background-color:coral;color:brown;" onclick= "window.location.href='animals.html';">Start</div>
-    </div>
-  </div>
+      <!-- SHAPES -->
 
-  <div class="card-wrapper">
-        <div class="shadow-card" style = "background-color:coral;"></div>
-        <div class="card" style = "border-color:coral;border-color:brown;">
-        <div class="card-content"> 
-          <div class="card-image">
-            <img src="1.png" alt="Card Image">
+      <div class="card-wrapper">
+        <div class="shadow-card" style="background-color: coral;"></div>
+        <div class="card" style="border-color: brown;">
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-shapes.png" alt="Card Image">
+            </div>
+            <div class="card-title">Shapes</div>
           </div>
-          <div class="card-title">Card</div>
+          <div class="start-button" style="background-color: coral; color: brown;">Start</div>
         </div>
-        <div class="start-button" style = "background-color:coral;color:brown;">Start</div>
       </div>
-    </div>
 
-<div class="card-wrapper">
-  <div class="shadow-card"></div>
-  <div class="card">
-  <div class="card-content"> 
-    <div class="card-image">
-      <img src="1.png" alt="Card Image">
-    </div>
-    <div class="card-title">Card</div>
-  </div>
-  <div class="start-button">Start</div>
-</div>
-</div>
+      <!-- NUMBERS -->
 
-<div class="card-wrapper">
-  <div class="shadow-card"></div>
-  <div class="card">
-  <div class="card-content"> 
-    <div class="card-image">
-      <img src="2.png" alt="Card Image">
-    </div>
-    <div class="card-title">Card</div>
-  </div>
-  <div class="start-button">Start</div>
-</div>
-</div>
+      <div class="card-wrapper">
+        <div class="shadow-card" style="background-color: coral;"></div>
+        <div class="card" style="border-color: brown;">
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-numbers.png" alt="Card Image">
+            </div>
+            <div class="card-title">Numbers</div>
+          </div>
+          <div class="start-button" style="background-color: coral; color: brown;">Start</div>
+        </div>
+      </div>
 
-<div class="card-wrapper">
-  <div class="shadow-card"></div>
-  <div class="card">
-  <div class="card-content"> 
-    <div class="card-image">
-      <img src="3.png" alt="Card Image">
-    </div>
-    <div class="card-title">Card</div>
-  </div>
-  <div class="start-button">Start</div>
-</div>
-</div>
+      <!-- FEELINGS -->
+
+      <div class="card-wrapper">
+        <div class="shadow-card"></div>
+        <div class="card">
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-feelings.png" alt="Card Image">
+            </div>
+            <div class="card-title">Feelings</div>
+          </div>
+          <div class="start-button">Start</div>
+        </div>
+      </div>
+
+      <!-- WEATHER -->
+
+      <div class="card-wrapper">
+        <div class="shadow-card"></div>
+        <div class="card">
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-weather.png" alt="Card Image">
+            </div>
+            <div class="card-title">Weather</div>
+          </div>
+          <div class="start-button">Start</div>
+        </div>
+      </div>
+
+      <!-- ANIMALS -->
+      <div class="card-wrapper">
+        <div class="shadow-card"></div>
+        <div class="card">
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-animals.png" alt="Card Image">
+            </div>
+            <div class="card-title">Animals</div>
+          </div>
+          <div class="start-button" onclick="window.location.href='animals.html';">Start</div>
+        </div>
+      </div>
 
     </div>
-
     <button id="nextBtn" class="nav-btn">Next</button>
   </div>
 
-  <script src="homejs.js"></script>
+  <script src="scripts/homejs.js"></script>
 </body>
 </html>
