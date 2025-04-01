@@ -1,17 +1,550 @@
-<html>
-    <head>
-        <title>
-            
-        </title>
-        <link rel="stylesheet" href="css/animals.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farm Animals Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    body {
+      background-image: url('images/animals/bg_farm.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Fredoka", sans-serif;
+      font-weight: bold;
+    }
 
-    </head>
-    <body style="background-image: url('images/animals/bg_farm.png');">
+    .back-button {
+      width: 90px;
+      height: auto;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 10;
+    }
 
-        <a href="javascript:history.back()">
-            <img src="images/back.png" alt="Back" style="width: 90px; height: auto; position: absolute; top: 20px; left: 20px; cursor: pointer;">
-        </a>
+    /* Container for all hidden animal triggers */
+    .animal-triggers {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Each animal trigger container */
+    .hidden-animal {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      transform-origin: center;
+    }
+
+    .hidden-animal:hover {
+      transform: scale(1.05);
+    }
+
+    /* Position and size for the animal triggers */
+    #trigger-cow { top: 30px; left: 50px; }
+    #trigger-cow img:first-child { width: 380px; }
+    
+    #trigger-sheep { top: 350px; left: 80px; }
+    #trigger-sheep img:first-child { width: 300px; }
+    
+    #trigger-duck { top: 150px; right: 100px; }
+    #trigger-duck img:first-child { width: 350px; }
+    
+    #trigger-horse { top: 180px; left: 540px; }
+    #trigger-horse img:first-child { width: 200px; }
+    
+    #trigger-pig { top: 400px; left: 650px; }
+    #trigger-pig img:first-child { width: 400px; }
+
+    @keyframes bounceUpHovered {
+      0%, 100% { transform: scale(1.05) translateY(0); }
+      50% { transform: scale(1.05) translateY(-15px); }
+    }
+
+    /* Thought Bubble styles */
+    .bubble {
+      position: absolute;
+      top: -5px;
+      right: -25px;
+      width: 90px;
+      height: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .hidden-animal:hover .bubble {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Dark Overlay for Popup */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Popup for animal card */
+    .popup {
+      position: fixed;
+      bottom: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      text-align: center;
+      width: 600px;
+      transition: bottom 0.4s ease-in-out, opacity 0.3s ease;
+      opacity: 1;
+    }
+
+    .popup.active {
+      bottom: 50%;
+      transform: translate(-50%, 50%);
+    }
+
+    #animalCard {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Popup inner container */
+    .animal-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .animal-shadow,
+    .animal-reveal {
+      width: 290px;
+      height: auto;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .animal-shadow:hover,
+    .animal-reveal:hover {
+      transform: scale(1.05);
+    }
+
+    @keyframes animalBounceHovered {
+      0%, 100% { transform: scale(1.05) translateY(0); }
+      50% { transform: scale(1.05) translateY(-15px); }
+    }
+
+    .animal-name {
+      position: absolute;
+      top: 100%;
+      cursor: pointer;
+    }
+
+    .word-image {
+      width: 250px;
+      height: auto;
+    }
+
+    #songButton {
+      position: fixed;
+      bottom: -10px;
+      right: 20px; /* Align to the right */
+      width: 200px;
+      height: auto;
+      cursor: pointer;
+      z-index: 30;
+    }
+
+    /* Video Overlay Styles */
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 25;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s;
+    }
+
+    .video-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .video-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <a href="javascript:history.back()" id="backButton">
+    <img src="images/back.png" alt="Back" class="back-button" />
+  </a>
+
+  <div class="animal-triggers">
+    <!-- COW / BARN -->
+    <div class="hidden-animal" id="trigger-cow" data-animal="cow">
+      <img src="images/animals/farm-animals-barn.png" alt="Barn" />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" 
+      />
+    </div>
+
+    <!-- SHEEP / BUSH -->
+    <div class="hidden-animal" id="trigger-sheep" data-animal="sheep">
+      <img src="images/animals/farm-animals-bush.png" alt="Bush" />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" />
+    </div>
+
+    <!-- DUCK / POND -->
+    <div class="hidden-animal" id="trigger-duck" data-animal="duck">
+      <img src="images/animals/farm-animals-pond.png" alt="Pond" />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" 
+      />
+    </div>
+
+    <!-- HORSE / HAY -->
+    <div class="hidden-animal" id="trigger-horse" data-animal="horse">
+      <img src="images/animals/farm-animals-hay.png" alt="Hay" />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" />
+    </div>
+
+    <!-- PIG / MUD -->
+    <div class="hidden-animal" id="trigger-pig" data-animal="pig">
+      <img src="images/animals/farm-animals-mud.png" alt="Mud" />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble"
+      />
+    </div>
+  </div>
+
+  <!-- Song Button -->
+  <img id="songButton" src="song-button.png" alt="Play Video" />
+
+  <!-- Dark Background Overlay for Animal Popup -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Popup for animal card -->
+  <div class="popup" id="popup">
+    <img src="images/animals/animal-card.png" id="animalCard" alt="Animal Card" />
+    <div class="animal-container">
+      <img src="" class="animal-shadow" id="animalShadow" alt="Animal Shadow" />
+      <img src="" class="animal-reveal" id="animalReveal" alt="Animal Reveal" style="display: none;" />
+      <div class="animal-name" id="animalName">
+        <img src="" alt="Animal Name" id="wordImage" class="word-image" style="display: none;" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Overlay -->
+  <div class="video-overlay" id="videoOverlay">
+    <div class="video-container">
+      <video id="videoPlayer" controls autoplay>
+        <source src="videos/Old-Mcdonald-Farm-Animals.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+  <!-- Audio Elements (reused dynamically) -->
+  <audio id="sound1">
+    <source src="" type="audio/mpeg" />
+  </audio>
+  <audio id="sound2">
+    <source src="" type="audio/mpeg" />
+  </audio>
+  <audio id="teacherSound">
+    <source src="" type="audio/mpeg" />
+  </audio>
+
+  <!-- Background Music -->
+  <audio id="bgMusic" loop>
+    <source src="sounds/old-mcdonald-ambient.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Background music setup
+      const bgMusic = document.getElementById("bgMusic");
+      bgMusic.volume = 0.0; // Start with volume 0 for fade in
+      
+      // Fade in background music when page loads
+      function fadeInMusic() {
+        let volume = 0;
+        const targetVolume = 0.3; // Maximum volume (adjust as needed)
+        const fadeInterval = setInterval(() => {
+          volume += 0.02;
+          if (volume >= targetVolume) {
+            volume = targetVolume;
+            clearInterval(fadeInterval);
+          }
+          bgMusic.volume = volume;
+        }, 100);
+      }
+
+      // Start playing the background music
+      bgMusic.play().then(() => {
+        fadeInMusic();
+      }).catch(error => {
+        console.log("Autoplay prevented. User interaction required to play music.");
+        // On mobile, we might need user interaction first, so we'll handle this later
+      });
+
+      // Add an event to play music after first user interaction if autoplay was prevented
+      document.body.addEventListener('click', function() {
+        if (bgMusic.paused) {
+          bgMusic.play().then(() => {
+            fadeInMusic();
+          });
+        }
+      }, { once: true });
+
+      // Fade out the music when leaving the page
+      document.getElementById('backButton').addEventListener('click', function(event) {
+        event.preventDefault();
         
-    </body>
+        let volume = bgMusic.volume;
+        const fadeOutInterval = setInterval(() => {
+          volume -= 0.05;
+          if (volume <= 0) {
+            volume = 0;
+            clearInterval(fadeOutInterval);
+            bgMusic.pause();
+            history.back();
+          }
+          bgMusic.volume = volume;
+        }, 100);
+      });
 
+      // Configuration for each animal
+      const animalData = {
+        cow: {
+          name: "Cow",
+          shadowImage: "images/animals/cow-shadow.png",
+          revealImage: "images/animals/cow.png",
+          wordImage: "images/animals/word-cow.png",
+          sound1: "sounds/cowsound.ogg",
+          sound2: "sounds/teacherSaysCOW.mp3"
+        },
+        sheep: {
+          name: "Sheep",
+          shadowImage: "images/animals/sheep-shadow.png",
+          revealImage: "images/animals/sheep.png",
+          wordImage: "images/animals/word-sheep.png",
+          sound1: "sounds/sheepsound.mp3",
+          sound2: "sounds/teacherSaysSHEEP.mp3"
+        },
+        duck: {
+          name: "Duck",
+          shadowImage: "images/animals/duck-shadow.png",
+          revealImage: "images/animals/duck.png",
+          wordImage: "images/animals/word-duck.png",
+          sound1: "sounds/ducksound.mp3",
+          sound2: "sounds/teacherSaysDUCK.mp3"
+        },
+        horse: {
+          name: "Horse",
+          shadowImage: "images/animals/horse-shadow.png",
+          revealImage: "images/animals/horse.png",
+          wordImage: "images/animals/word-horse.png",
+          sound1: "sounds/horsesound.mp3",
+          sound2: "sounds/teacherSaysHORSE.mp3"
+        },
+        pig: {
+          name: "Pig",
+          shadowImage: "images/animals/pig-shadow.png",
+          revealImage: "images/animals/pig.png",
+          wordImage: "images/animals/word-pig.png",
+          sound1: "sounds/pigsound.ogg",
+          sound2: "sounds/teacherSaysPIG.mp3"
+        }
+      };
+
+      // Elements for the popup and audio
+      const overlay = document.getElementById("overlay");
+      const popup = document.getElementById("popup");
+      const animalShadow = document.getElementById("animalShadow");
+      const animalReveal = document.getElementById("animalReveal");
+      const wordImage = document.getElementById("wordImage");
+      const sound1 = document.getElementById("sound1");
+      const sound2 = document.getElementById("sound2");
+      const teacherSound = document.getElementById("teacherSound");
+
+      let currentAnimal = null; // track the currently selected animal
+
+      // Function to open popup with given animal data
+      function openPopup(animalKey) {
+        currentAnimal = animalData[animalKey];
+
+        // Populate the popup with the correct images
+        animalShadow.src = currentAnimal.shadowImage;
+        animalReveal.src = currentAnimal.revealImage;
+        wordImage.src = currentAnimal.wordImage;
+
+        // Reset visibility: show shadow, hide reveal and word
+        animalShadow.style.display = "block";
+        animalReveal.style.display = "none";
+        wordImage.style.display = "none";
+
+        // Set the audio sources for popup sounds
+        sound1.querySelector("source").src = currentAnimal.sound1;
+        sound1.load();
+        sound2.querySelector("source").src = currentAnimal.sound2;
+        sound2.load();
+        teacherSound.querySelector("source").src = currentAnimal.sound2;
+        teacherSound.load();
+
+        // Show overlay and popup with animations
+        overlay.classList.add("active");
+        popup.style.opacity = "";
+        popup.style.bottom = "";
+        setTimeout(() => {
+          popup.classList.add("active");
+        }, 100);
+      }
+
+      // For each hidden animal trigger, attach separate events for the object and bubble images
+      const triggers = document.querySelectorAll(".hidden-animal");
+      triggers.forEach(trigger => {
+        const animalKey = trigger.getAttribute("data-animal");
+        const objectImage = trigger.querySelector("img:first-child");
+        const bubbleImage = trigger.querySelector("img.bubble");
+
+        // Add bounce animation when clicking the object
+        objectImage.addEventListener("click", function (e) {
+          e.stopPropagation();
+          trigger.style.animation = "bounceUpHovered 0.4s";
+          setTimeout(() => { trigger.style.animation = ""; }, 400);
+          
+          // Play the animal sound
+          const tempSound = new Audio(animalData[animalKey].sound1);
+          tempSound.play();
+        });
+
+        // Clicking the bubble image opens the popup
+        bubbleImage.addEventListener("click", function (e) {
+          e.stopPropagation();
+          openPopup(animalKey);
+        });
+      });
+
+      // Click on the animal shadow in the popup to reveal the animal
+      animalShadow.addEventListener("click", function () {
+        this.style.animation = "animalBounceHovered 0.4s";
+        setTimeout(() => { this.style.animation = ""; }, 400);
+
+        animalShadow.style.display = "none";
+        animalReveal.style.display = "block";
+        wordImage.style.display = "block";
+
+        sound1.play();
+        sound1.onended = function () {
+          sound2.play();
+        };
+      });
+
+      // Clicking the revealed animal plays the first sound again
+      animalReveal.addEventListener("click", function () {
+        this.style.animation = "animalBounceHovered 0.4s";
+        setTimeout(() => { this.style.animation = ""; }, 400);
+        sound1.play();
+      });
+
+      // Clicking the word image plays the teacher's audio
+      wordImage.addEventListener("click", function () {
+        teacherSound.play();
+      });
+
+      // Clicking the overlay closes the popup and resets its state
+      overlay.addEventListener("click", function () {
+        popup.style.opacity = "0";
+        setTimeout(() => {
+          overlay.classList.remove("active");
+          popup.classList.remove("active");
+          popup.style.bottom = "-100%";
+          setTimeout(() => {
+            animalShadow.style.display = "block";
+            animalReveal.style.display = "none";
+            wordImage.style.display = "none";
+            setTimeout(() => {
+              popup.style.opacity = "1";
+            }, 50);
+          }, 300);
+        }, 300);
+      });
+
+      // Video Overlay Elements
+      const songButton = document.getElementById("songButton");
+      const videoOverlay = document.getElementById("videoOverlay");
+      const videoPlayer = document.getElementById("videoPlayer");
+
+      // When the song button is clicked, show the video overlay and pause background music
+      songButton.addEventListener("click", function () {
+        videoOverlay.classList.add("active");
+        bgMusic.pause(); // Pause background music when video plays
+        videoPlayer.play();
+      });
+
+      // Clicking outside the video (on the overlay) will close the video overlay
+      videoOverlay.addEventListener("click", function (e) {
+        // Only close if the click is on the overlay and not the video itself
+        if (e.target === videoOverlay) {
+          videoOverlay.classList.remove("active");
+          videoPlayer.pause();
+          videoPlayer.currentTime = 0;
+          bgMusic.play(); // Resume background music when video is closed
+        }
+      });
+
+      // When video ends, resume background music
+      videoPlayer.addEventListener('ended', function() {
+        bgMusic.play();
+        videoOverlay.classList.remove("active");
+      });
+
+      // Make sure background music loops
+      bgMusic.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+      });
+    });
+  </script>
+</body>
 </html>
