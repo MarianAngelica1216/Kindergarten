@@ -2,27 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sound Object with Timer and Letter Boxes</title>
+  <title>Sound Object with Timer and Randomized Letter Boxes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
   <style>
-
     body {
       margin: 0;
       padding: 0;
       background: #f5f5f5;
-      font-family: sans-serif;
       overflow: hidden;
+      font-family: fredoka, sans-serif;
     }
 
+    body {
+      background-image: url('images/abc/abc-bg.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Fredoka", sans-serif;
+      font-weight: bold;
+    }
+
+    .back-button {
+      width: 90px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 10;
+    }
     .container {
       position: relative;
       width: 100vw;
       height: 100vh;
     }
-
+    /* Initially hide the card-wrapper */
     .card-wrapper {
+      display: none;
       position: absolute;
-      width: 300px;
-      height: 400px;
+      width: 350px;
+      height: 450px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
@@ -30,73 +50,78 @@
       cursor: pointer;
       z-index: 2;
     }
-
     .card-wrapper.moved {
-      transform: translate(calc(-50% + 200px), -50%);
+      transform: translate(calc(-50% + 300px), -50%);
     }
     .card {
       width: 100%;
       height: 100%;
       background-color: #fff3ea;
-      border: 5px solid cadetblue;
+      border: 7px solid cadetblue;
       border-radius: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
       box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
     }
+    .shadow-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: skyblue;
+      border-radius: 30px;
+      transform: rotate(10deg);
+      z-index: -1;
+    }
     .sound-object {
       max-width: 100%;
       max-height: 100%;
     }
-    /* Interaction container (letter boxes + timer) - initially hidden */
     .interaction-container {
       position: absolute;
-      left: 20px;
+      right: calc(50% + 30px);
       top: 50%;
       transform: translateY(-50%);
       opacity: 0;
       transition: opacity 0.5s ease;
       z-index: 1;
     }
-    /* Letter boxes grid */
     .letter-boxes {
+      left: 10px;
       position: relative;
-      width: 220px; /* 2 boxes of 100px + 20px gap */
-      height: 220px;
+      width: 490px;
+      height: 470px;
       display: grid;
-      grid-template-columns: repeat(2, 100px);
-      grid-template-rows: repeat(2, 100px);
+      grid-template-columns: repeat(2, 250px);
+      grid-template-rows: repeat(2, 230px);
       gap: 20px;
     }
     .letter-box {
-      width: 100px;
-      height: 100px;
+      width: 240px;
+      height: 220px;
       background-color: white;
-      border: 5px solid;
-      border-radius: 10px;
+      border: 7px solid;
+      border-radius: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 48px;
+      font-size: 80px;
       font-weight: bold;
       color: black;
       transition: transform 0.3s ease;
       cursor: pointer;
     }
     .letter-box.inflated {
-      transform: scale(1.2);
+      transform: scale(1.1);
     }
     .letter-box.selected {
       background-color: skyblue;
       color: indigo;
     }
-    /* Specific border colors */
     .red { border-color: red; }
     .blue { border-color: blue; }
     .green { border-color: green; }
     .pink { border-color: pink; }
-    /* Timer styling: positioned in the center of the letter boxes grid */
     .timer-container {
       position: absolute;
       left: 50%;
@@ -124,92 +149,319 @@
       border-radius: 50%;
       background: conic-gradient(red 0deg, red var(--angle, 360deg), transparent var(--angle, 360deg));
     }
+    /* Start screen styling */
+    #startScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      z-index: 5;
+    }
+    #startScreen img {
+      width: 500px;
+      height: auto;
+    }
+    
+    /* Countdown image size adjustment */
+    #countdownDisplay {
+      width: 150px;
+      height: 150px;
+    }
+    
   </style>
 </head>
 <body>
+  <a href="javascript:history.back()" id="backButton">
+    <img src="images/back.png" alt="Back" class="back-button" />
+  </a>
+  
+  <!-- Start Screen with animated start button -->
+  <div id="startScreen">
+    <img id="startButtonImg" src="images/abc/start1.png" alt="Start Button">
+    <img id="countdownDisplay" style="display: none;" alt="Countdown">
+  </div>
+  
+  <!-- Play Again Button (initially hidden) -->
+<div id="playAgain" style="display:none; position:absolute; top:50%; left:50%; transform: translate(-50%,-50%); z-index:10;">
+  <img src="images/abc/playagain.png" alt="Play Again" style="width:300px; cursor:pointer;">
+</div>
+
   <div class="container">
-    <!-- Interaction container is initially hidden -->
-    <div class="interaction-container" id="interactionContainer">
-      <div class="letter-boxes">
-        <div class="letter-box red"><span class="letter">A</span></div>
-        <div class="letter-box blue"><span class="letter">B</span></div>
-        <div class="letter-box green"><span class="letter">C</span></div>
-        <div class="letter-box pink"><span class="letter">D</span></div>
-        <!-- Timer appears centered over the letter boxes -->
-        <div class="timer-container" id="timerContainer">
-          <div class="background"></div>
-          <div class="pie" id="pie"></div>
+    <div class="items-container">
+      <!-- Interaction container -->
+      <div class="interaction-container" id="interactionContainer">
+        <div class="letter-boxes">
+          <div class="letter-box red"><span class="letter"></span></div>
+          <div class="letter-box blue"><span class="letter"></span></div>
+          <div class="letter-box green"><span class="letter"></span></div>
+          <div class="letter-box pink"><span class="letter"></span></div>
+          <div class="timer-container" id="timerContainer">
+            <div class="background"></div>
+            <div class="pie" id="pie"></div>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Card that is initially centered -->
-    <div class="card-wrapper" id="cardWrapper">
-      <div class="card">
-        <img src="images/animals/chicken.png" alt="Sound Object" class="sound-object" onclick="playSound()">
+      
+      <!-- Card: now hidden initially -->
+      <div class="card-wrapper" id="cardWrapper">
+        <div class="shadow-card" style="background-color: coral;"></div>
+        <div class="card">
+          <img src="" alt="Sound Object" class="sound-object">
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    // Answer key mapping letter to word.
+    const answerKey = {
+      Aa: "Apple",
+      Bb: "Ball"
+    };
+
+    // DOM elements
     const cardWrapper = document.getElementById('cardWrapper');
     const interactionContainer = document.getElementById('interactionContainer');
     const timerContainer = document.getElementById('timerContainer');
     const pie = document.getElementById('pie');
     const letterBoxes = document.querySelectorAll('.letter-box');
+    const cardImg = document.querySelector('.sound-object');
+    const startScreen = document.getElementById('startScreen');
+    const startButtonImg = document.getElementById('startButtonImg');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+
+    // Background music element
+    const backgroundMusic = new Audio('sounds/gamemusic.mp3');
+    const beepSound = new Audio('sounds/beep.mp3');
     
-    let timerEnded = false; // becomes true when timer finishes
+    // Timer variables.
+    let timerEnded = false;
     let angle = 360;
-    const duration = 10000; // Timer duration in milliseconds (10 seconds)
-    const interval = 50; // update every 50ms
+    const duration = 5000; // 5 seconds countdown timer for letter boxes
+    const interval = 50;
     const step = (360 / duration) * interval;
     let timer;
+
+    // Global question object.
+    let currentQuestion = null;
     
-    // Dummy audio element (replace with actual sound if needed)
-    const audioElement = new Audio('sounds/sound-duck.mp3');
+
+    // Start button animation variables.
+    const startImages = [
+      'images/abc/start1.png',
+      'images/abc/start2.png',
+      'images/abc/start3.png',
+    ];
+    let startFrame = 0;
+    let startAnimInterval;
+
+    // Countdown images.
+    const countdownImages = [
+      'images/abc/countdown3.png',
+      'images/abc/countdown2.png',
+      'images/abc/countdown1.png',
+      'images/abc/go.png'
+    ];
+
+    // Utility: play audio and return a promise.
+    function playAudio(src) {
+      return new Promise(resolve => {
+        const audio = new Audio(src);
+        audio.play();
+        audio.addEventListener('ended', () => resolve());
+      });
+    }
+
+    // Utility: delay for given milliseconds.
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Utility: shuffle an array.
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Animate the start button images in a loop.
+    function startButtonAnimation() {
+      startAnimInterval = setInterval(() => {
+        startFrame = (startFrame + 5) % startImages.length;
+        startButtonImg.src = startImages[startFrame];
+      }, 300); // change frame every 300ms
+    }
+
+    // Show the countdown (using countdown images) then call the question auto-start.
+    async function showCountdown() {
+      // Optionally, stop the start button animation if still running.
+      clearInterval(startAnimInterval);
+      
+      // Hide start button and show countdown display
+      startButtonImg.style.display = 'none';
+      countdownDisplay.style.display = 'block';
+      countdownDisplay.style.width = '150px';
+      
+      // Loop through countdown images, 1 second each with beep sound.
+ for (let i = 0; i < countdownImages.length; i++) {
+    countdownDisplay.src = countdownImages[i];
     
-    function playSound() {
-      // Play the audio
-      audioElement.play();
-      // When audio finishes, move the card and show the interaction container
-      audioElement.addEventListener('ended', moveCard);
+    // Play beep for 3,2,1 and go.mp3 for the last one
+    if (i < countdownImages.length - 1) {
+      beepSound.currentTime = 0; // Reset sound to beginning
+      beepSound.play();
+    } else {
+      // Play go.mp3 for the last item (go)
+      const goSound = new Audio('sounds/go.mp3');
+      goSound.play();
     }
     
-    function moveCard() {
-      // Slide the card to the right
-      cardWrapper.classList.add('moved');
-      // Hide the card's clickability (optional)
+    await delay(1500);
+  }
+      
+      // Hide the start screen and reveal the card.
+      startScreen.style.display = 'none';
+      cardWrapper.style.display = 'block';
+      
+      // Start the question automatically.
+      startQuestionAuto();
+    }
+
+    // Set up a new question and auto-play the question sound.
+    async function startQuestionAuto() {
+      // Hide interaction container and reset timer.
+      interactionContainer.style.opacity = '0';
+      timerContainer.style.opacity = '0';
+      angle = 360;
+      pie.style.setProperty('--angle', angle + 'deg');
+      timerEnded = false;
+      
+      // Ensure card is centered and clickable is disabled.
+      cardWrapper.classList.remove('moved');
       cardWrapper.style.pointerEvents = 'none';
-      // After the card has moved (500ms delay), fade in the interaction container and start the timer
+
+      // Reset letter boxes.
+      letterBoxes.forEach(box => {
+        box.classList.remove('selected');
+        box.style.pointerEvents = 'auto';
+      });
+
+      // Generate a new question.
+      const keys = Object.keys(answerKey);
+      const randomIndex = Math.floor(Math.random() * keys.length);
+      const correctLetter = keys[randomIndex];
+      const word = answerKey[correctLetter];
+
+      currentQuestion = {
+        correctLetter: correctLetter,
+        // In this new flow, the question sound is auto-played immediately.
+        questionSound: `sounds/alphabet/${word}.MP3`,
+        answerSound: `sounds/alphabet/${correctLetter}.MP3`,
+        image: `images/animals/chicken.png`
+      };
+
+      // Update card image.
+      cardImg.src = currentQuestion.image;
+
+      // Build answer options.
+      let otherKeys = keys.filter(letter => letter !== correctLetter);
+      shuffleArray(otherKeys);
+      const wrongAnswers = otherKeys.slice(0, 3);
+      const options = [correctLetter, ...wrongAnswers];
+      shuffleArray(options);
+      letterBoxes.forEach((box, index) => {
+        box.querySelector('.letter').textContent = options[index];
+      });
+
+      // Automatically play the question sound.
+      const qAudio = new Audio(currentQuestion.questionSound);
+      qAudio.play();
+      qAudio.addEventListener('ended', moveCard);
+    }
+
+    // Slide the card to reveal the letter boxes and start the timer.
+    function moveCard() {
+      cardWrapper.classList.add('moved');
+      // Disable further clicking.
+      cardWrapper.style.pointerEvents = 'none';
       setTimeout(() => {
         interactionContainer.style.opacity = '1';
         startTimer();
       }, 500);
     }
-    
+
+    // Start the letter-box countdown timer.
     function startTimer() {
-      // Fade in the timer (it appears over the letter boxes)
       timerContainer.style.opacity = '1';
+      
+      // Play background music when timer starts
+      backgroundMusic.currentTime = 0;
+      backgroundMusic.play();
+      
       timer = setInterval(() => {
         angle -= step;
         pie.style.setProperty('--angle', angle + 'deg');
         if (angle <= 0) {
           clearInterval(timer);
           timerEnded = true;
+          
+          // Stop background music when timer ends
+          backgroundMusic.pause();
+          
           disableInteractions();
+          checkAnswer();
         }
       }, interval);
     }
-    
+
+    // Disable letter box interactions.
     function disableInteractions() {
-      // Disable hover and click events on the letter boxes
       letterBoxes.forEach(box => {
         box.style.pointerEvents = 'none';
         box.classList.remove('inflated');
       });
     }
-    
-    // Set up hover and click events for the letter boxes
+
+    // Check the user's answer and play feedback sounds.
+    async function checkAnswer() {
+      let userAnswer = null;
+      letterBoxes.forEach(box => {
+        if (box.classList.contains('selected')) {
+          userAnswer = box.querySelector('.letter').textContent.trim();
+        }
+      });
+
+      if (userAnswer === currentQuestion.correctLetter) {
+        await playAudio('sounds/victory.mp3');
+      } else {
+        await playAudio('sounds/fail.mp3');
+      }
+
+      // Wait a few seconds before playing the answer sound.
+      await delay(1000);
+      await playAudio(currentQuestion.answerSound);
+      resetForNextQuestion();
+    }
+
+    // Reset for the next question.
+    function resetForNextQuestion() {
+      interactionContainer.style.opacity = '0';
+      timerContainer.style.opacity = '0';
+      angle = 360;
+      pie.style.setProperty('--angle', angle + 'deg');
+      letterBoxes.forEach(box => {
+        box.classList.remove('selected');
+        box.style.pointerEvents = 'auto';
+      });
+      cardWrapper.classList.remove('moved');
+      cardWrapper.style.pointerEvents = 'auto';
+      // Prepare next question after a short delay.
+      setTimeout(startQuestionAuto, 500);
+    }
+
+    // Letter box hover and click events.
     letterBoxes.forEach(box => {
       box.addEventListener('mouseover', () => {
         if (!timerEnded) {
@@ -221,12 +473,29 @@
       });
       box.addEventListener('click', () => {
         if (!timerEnded) {
-          // Remove the 'selected' class from all boxes and add it to the clicked box
           letterBoxes.forEach(b => b.classList.remove('selected'));
           box.classList.add('selected');
         }
       });
     });
+
+    // Start the start-button animation on page load.
+    window.addEventListener('load', () => {
+      startButtonAnimation();
+      // When the start screen is clicked, show the countdown.
+      startScreen.addEventListener('click', showCountdown);
+    });
+
+    // Preload audio files
+    function preloadAudio(src) {
+      const audio = new Audio();
+      audio.src = src;
+    }
+    
+    preloadAudio('sounds/fail.mp3');
+    preloadAudio('sounds/beep.mp3');
+    preloadAudio('sounds/victory.mp3');
+    preloadAudio('sounds/fail.mp3');
   </script>
 </body>
 </html>
