@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Sound Object with Timer and Letter Boxes</title>
   <style>
+
     body {
       margin: 0;
       padding: 0;
@@ -11,12 +12,13 @@
       font-family: sans-serif;
       overflow: hidden;
     }
+
     .container {
       position: relative;
       width: 100vw;
       height: 100vh;
     }
-    /* Card styling: initially centered */
+
     .card-wrapper {
       position: absolute;
       width: 300px;
@@ -28,7 +30,7 @@
       cursor: pointer;
       z-index: 2;
     }
-    /* When moved, the card slides to the right */
+
     .card-wrapper.moved {
       transform: translate(calc(-50% + 200px), -50%);
     }
@@ -144,7 +146,7 @@
     <!-- Card that is initially centered -->
     <div class="card-wrapper" id="cardWrapper">
       <div class="card">
-        <img src="images/song-button.png" alt="Sound Object" class="sound-object" onclick="playSound()">
+        <img src="images/animals/chicken.png" alt="Sound Object" class="sound-object" onclick="playSound()">
       </div>
     </div>
   </div>
