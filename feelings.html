@@ -10,6 +10,17 @@
       overflow: hidden;
       height: 100%;
     }
+
+    .back-button {
+      width: 90px;
+      height: auto;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 10;
+      position: fixed;
+
+    }
     
     .container {
       position: relative;
@@ -60,13 +71,20 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: transform 0.5s ease-out; 
     }
+
+    .clickable-item:hover {
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+    
     
     /* Position the selected image ABOVE the kid image (vertically) */
     .selected-img {
       width: 100px;
       height: auto;
-      margin-bottom: 10px; /* Space between the selected image and kid image */
+      margin-bottom: 0px; /* Space between the selected image and kid image */
     }
     
     /* Position the kid image */
@@ -74,76 +92,129 @@
       width: 100px;
       height: auto;
     }
-    
+
+
     .side-panel {
-      position: fixed;
-      top: 0;
-      right: -200px;
-      width: 200px;
-      height: 100%;
-      background: white;
-      box-shadow: -5px 0 10px rgba(0,0,0,0.3);
-      transition: right 0.5s ease-in-out;
-      padding: 20px;
-      z-index: 10;
-    }
-    
-    .side-panel button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+  position: fixed;
+  bottom: -100px; /* Start off-screen at the bottom */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust to make it truly centered */
+  width: auto;
+  height: auto; /* Adjust height based on the number of buttons */
+  border-radius: 35px;
+  border-width: 5px;
+  border-color: rgb(28, 27, 35);
+  border-style: solid;
+  background: white;
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.3);
+  transition: bottom 0.5s ease-in-out; /* Slide up effect */
+  z-index: 10;
+  padding: 20px;
+  display: flex;
+  flex-direction: row; /* Buttons in a row */
+  align-items: center;
+  justify-content: space-evenly; /* Space buttons evenly */
+}
+
+.face-button {
+  width: 100px; 
+  padding-left:20px;/* Adjust width as needed */
+  transition: transform 0.3s ease-out;
+  position: relative;
+  display: block;
+}
+
+.face-button:hover {
+  transform: scale(1.3);
+  cursor: pointer;
+}
+
   </style>
 </head>
 <body>
   <div class="container" id="container">
     <div class="scene" id="scene">
       <img class="background" id="background" src="images/feelings/bg-playground.png" alt="Background">
+         <a href="javascript:history.back()" id="backButton">
+            <img src="images/back.png" alt="Back" class="back-button" />
+          </a>
       
       <div class="items-layer">
         <!-- First clickable item - Notice the order of images is changed -->
-        <div class="clickable-item" style="bottom: 30%; left: 10%;" data-id="kid-scared">
-          <img class="selected-img" src="images/feelings/selected-null.png">
-          <img class="kid-img" src="images/feelings/kid-scared.png" alt="Scared Kid">
+        <div class="clickable-item" style="bottom: 210px; left: 250px;" data-id="kid-scared">
+          <img class="selected-img" src="images/feelings/selected-null.png" style = "margin-bottom: 5px; padding-left:150px;">
+          <img class="kid-img" src="images/feelings/kid-scared.png" alt="Scared Kid" style = "width:270px">
         </div>
         
         <!-- Second clickable item -->
-        <div class="clickable-item" style="top: 30%; right: 10%;" data-id="kid-sad">
+        <div class="clickable-item" style="bottom: 280px; right: 300px;" data-id="kid-sad">
           <img class="selected-img" src="images/feelings/selected-null.png">
-          <img class="kid-img" src="images/feelings/kid-sad.png" alt="Sad Kid">
+          <img class="kid-img" src="images/feelings/kid-sad.png" alt="Sad Kid" style = "width:120px">
         </div>
         
         <!-- Additional items -->
-        <div class="clickable-item" style="top: 20%; left: 40%;" data-id="kid-surprised">
+        <div class="clickable-item" style="top: 50px; right: 10px;" data-id="kid-surprised">
           <img class="selected-img" src="images/feelings/selected-null.png">
-          <img class="kid-img" src="images/feelings/kid-surprised.png" alt="Surprised Kid">
+          <img class="kid-img" src="images/feelings/kid-surprised.png" alt="Surprised Kid" style = "width:250px;">
         </div>
         
-        <div class="clickable-item" style="bottom: 20%; right: 30%;" data-id="kid-angry">
+        <div class="clickable-item" style="bottom: 70px; right: 480px;" data-id="kid-angry">
           <img class="selected-img" src="images/feelings/selected-null.png">
-          <img class="kid-img" src="images/feelings/kid-angry.png" alt="Angry Kid">
+          <img class="kid-img" src="images/feelings/kid-angry.png" alt="Angry Kid" style = "width:300px">
         </div>
         
-        <div class="clickable-item" style="top: 40%; left: 70%;" data-id="kid-happy">
-          <img class="selected-img" src="images/feelings/selected-null.png">
-          <img class="kid-img" src="images/feelings/kid-happy.png" alt="Happy Kid">
+        <div class="clickable-item" style= "bottom: 160px; left:900px;" data-id="kid-happy">
+          <img class="selected-img" src="images/feelings/selected-null.png" style = "margin: -70px">
+          <img class="kid-img" src="images/feelings/kid-happy.png" alt="Happy Kid" style = "width:350px;">
         </div>
       </div>
     </div>
   </div>
 
   <div class="side-panel" id="side-panel">
-    <button onclick="changeFeeling('selected-happy.png')">Happy</button>
-    <button onclick="changeFeeling('selected-sad.png')">Sad</button>
-    <button onclick="changeFeeling('selected-angry.png')">Angry</button>
-    <button onclick="changeFeeling('selected-surprised.png')">Surprised</button>
-    <button onclick="changeFeeling('selected-scared.png')">Scared</button>
+    <img src = "images/feelings/face-happy.png" onclick="changeFeeling('selected-happy.png');playSound('sounds/happy.mp3')" class = "face-button">
+    <img src = "images/feelings/face-sad.png" onclick="changeFeeling('selected-sad.png');playSound('sounds/sad.mp3')" class = "face-button">
+    <img src = "images/feelings/face-angry.png" onclick="changeFeeling('selected-angry.png');playSound('sounds/angry.mp3')" class = "face-button">
+    <img src = "images/feelings/face-surprised.png" onclick="changeFeeling('selected-surprised.png');playSound('sounds/surprised.mp3')" class = "face-button">
+    <img src= "images/feelings/face-scared.png" onclick="changeFeeling('selected-scared.png');playSound('sounds/scared.mp3')" class = "face-button">
   </div>
-
+  <audio id="bgMusic" loop>
+    <source src="sounds/bg-music1.mp3" type="audio/mpeg">
+  </audio>
   <script>
+    const bgMusic = document.getElementById("bgMusic");
+      bgMusic.volume = 0.0; // Start with volume 0 for fade in
+      
+      // Fade in background music when page loads
+      function fadeInMusic() {
+        let volume = 0;
+        const targetVolume = 0.3; // Maximum volume (adjust as needed)
+        const fadeInterval = setInterval(() => {
+          volume += 0.02;
+          if (volume >= targetVolume) {
+            volume = targetVolume;
+            clearInterval(fadeInterval);
+          }
+          bgMusic.volume = volume;
+        }, 100);
+      }
+
+      // Start playing the background music
+      bgMusic.play().then(() => {
+        fadeInMusic();
+      }).catch(error => {
+        console.log("Autoplay prevented. User interaction required to play music.");
+        // On mobile, we might need user interaction first, so we'll handle this later
+      });
+
+      // Add an event to play music after first user interaction if autoplay was prevented
+      document.body.addEventListener('click', function() {
+        if (bgMusic.paused) {
+          bgMusic.play().then(() => {
+            fadeInMusic();
+          });
+        }
+      }, { once: true });
     const container = document.getElementById('container');
     const scene = document.getElementById('scene');
     const background = document.getElementById('background');
@@ -216,7 +287,7 @@
         // Apply transform to scene for zooming
         scene.style.transition = 'transform 0.5s ease-out';
         scene.style.transformOrigin = `${itemCenterX}px ${itemCenterY}px`;
-        scene.style.transform = 'scale(2)';
+        scene.style.transform = 'scale(1.5)';
         
         // Darken only the background, not the items
         background.style.filter = 'brightness(0.5)';
@@ -228,7 +299,7 @@
         });
         
         // Show side panel
-        sidePanel.style.right = '0';
+        sidePanel.style.bottom = '40px';
         
         isZoomed = true;
         
@@ -250,11 +321,8 @@
       background.style.filter = '';
       
       // Hide side panel
-      sidePanel.style.right = '-200px';
-      
-      // Restore original scroll position
-      container.scrollLeft = originalContainerScroll;
-      
+      sidePanel.style.bottom = '-200px';
+            
       // Re-enable scrolling
       container.style.overflowX = 'auto';
       
@@ -269,6 +337,12 @@
       }
     }
     
+    function playSound(audioFile) {
+  let audio = new Audio(audioFile); // Set the audio file correctly
+  audio.play();
+}
+
+
     // Load event to set proper dimensions
     window.addEventListener('load', () => {
       // Wait for background image to load
@@ -293,6 +367,12 @@
         background.onload();
       }
     });
+
+    window.addEventListener('load', () => {
+  // Center the scroll position on load
+  container.scrollLeft = (scene.scrollWidth - container.clientWidth) / 2;
+});
+
   </script>
 </body>
 </html>

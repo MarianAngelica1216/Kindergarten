@@ -1,0 +1,158 @@
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
+
+        <style>
+            body {
+                background-image: url("images/numbers/bg-number.png");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                position: relative;
+                height: 100vh;
+                overflow-y: hidden;
+                margin: 0px;
+                overflow-x: hidden; 
+font-family: fredoka;
+            }
+
+            .back-button {
+      width: 90px;
+      height: auto;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 10;
+    }
+            
+            /* Items container at the top */
+            .items-container {
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 10px;
+                z-index: 30;
+            }
+
+            
+
+            /* Customer behind the frame */
+            .container-behind-counter {
+position:absolute;
+right: 200px;                
+                z-index: 1; /* Behind the stall */
+            }
+
+            .customer {
+                max-width: 250px;
+transform: translateY(25%);
+            }
+
+            /* Frame/stall */
+            .frame {
+                position: absolute;
+                top: -100px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 117%;
+                z-index: 2; 
+                overflow: hidden;
+                overflow-x: hidden;
+
+            }
+
+            /* Speech bubble at the top */
+            .speech-bubble {
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: white;
+                padding: 20px -20px -20px -20px;
+                border-radius: 50px;
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+                font-size: 40px;
+                font-weight: bold;
+                z-index: 25;
+            }
+
+            .speech-bubble::after {
+                content: "";
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-width: 10px;
+                border-style: solid;
+                border-color: white transparent transparent transparent;
+            }
+
+     .interaction-container {
+      position: absolute;
+      left:10px;
+      top: 50%;
+      opacity: 0;
+      z-index: 1;
+    }
+    .number-boxes {
+    transform: translateX(-290%);
+    top: 150px;
+      position: relative;
+      width: 170px;
+      height: 150px;
+      display: grid;
+      grid-template-columns: repeat(2, 170px);
+      grid-template-rows: repeat(2, 150px);
+      gap: 20px;
+    }
+ 
+    .number-box {
+      width: 170px;
+      height: 150px;
+      background-color: white;
+      border: 7px solid;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: bold;
+      color: black;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    
+        </style>
+    </head>
+    <body>
+
+        <a href="javascript:history.back()" id="backButton">
+            <img src="images/back.png" alt="Back" class="back-button" />
+          </a>
+        <!-- Items Container (At the Top) -->
+        <div class="items-container">
+            <div class = "number-boxes">
+            <div class="number-box red"></div>
+            <div class="number-box blue"></div>
+            <div class="number-box green"></div>
+            <div class="number-box pink"></div>
+        </div>
+        </div>
+
+        <!-- Speech Bubble (At the Top) -->
+        <div class="speech-bubble">
+            <p></p>
+        </div>
+
+        <!-- Customer (Behind the Stall) -->
+        <div class="container-behind-counter">
+            <img src="images/numbers/customers/1.png" class="customer">
+        </div>
+
+        <!-- Food Stall -->
+        <img src="images/numbers/food-stall.png" class="frame">
+    </body>
+</html>

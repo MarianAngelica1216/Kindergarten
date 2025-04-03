@@ -216,9 +216,36 @@
   <script>
     // Answer key mapping letter to word.
     const answerKey = {
-      Aa: "Apple",
-      Bb: "Ball"
+      Aa: "aso",
+      Bb: "bola",
+      Cc: "cactus",
+      Dd: "damit",
+      Ee: "elepante",
+      Ff: "fries",
+      Gg: "guitara",
+      Hh: "hikaw",
+      Ii: "itlog",
+      Jj: "jeepney",
+      Kk: "kamay",
+      Ll: "langgam",
+      Mm: "mangga",
+      Nn: "nota",
+      Ññ: "santo-nino",
+      Nng: "ngiti",
+      Oo: "oso",
+      Pp: "pusa",
+      Qq: "quezon",
+      Rr: "regalo",
+      Ss: "sapatos",
+      Tt: "talong",
+      Uu: "ulan",
+      Vv: "venus",
+      Ww: "walis",
+      Xx: "xray",
+      Yy: "yoyo",
+      Zz: "zoo"
     };
+
 
     // DOM elements
     const cardWrapper = document.getElementById('cardWrapper');
@@ -230,6 +257,7 @@
     const startScreen = document.getElementById('startScreen');
     const startButtonImg = document.getElementById('startButtonImg');
     const countdownDisplay = document.getElementById('countdownDisplay');
+    const playAgainBtn = document.getElementById('playAgain');
 
     // Background music element
     const backgroundMusic = new Audio('sounds/gamemusic.mp3');
@@ -245,6 +273,12 @@
 
     // Global question object.
     let currentQuestion = null;
+    // Track used questions
+    let usedQuestions = [];
+    // Track question count
+    let questionCount = 0;
+    // Max questions before showing play again
+    const MAX_QUESTIONS = 5;
     
 
     // Start button animation variables.
@@ -294,6 +328,23 @@
       }, 300); // change frame every 300ms
     }
 
+    // Reset the game state for a new game
+    function resetGame() {
+      usedQuestions = [];
+      questionCount = 0;
+      
+      // Hide play again button
+      playAgainBtn.style.display = 'none';
+      
+      // Show start screen
+      startScreen.style.display = 'block';
+      startButtonImg.style.display = 'block';
+      countdownDisplay.style.display = 'none';
+      
+      // Restart the button animation
+      startButtonAnimation();
+    }
+
     // Show the countdown (using countdown images) then call the question auto-start.
     async function showCountdown() {
       // Optionally, stop the start button animation if still running.
@@ -305,21 +356,21 @@
       countdownDisplay.style.width = '150px';
       
       // Loop through countdown images, 1 second each with beep sound.
- for (let i = 0; i < countdownImages.length; i++) {
-    countdownDisplay.src = countdownImages[i];
-    
-    // Play beep for 3,2,1 and go.mp3 for the last one
-    if (i < countdownImages.length - 1) {
-      beepSound.currentTime = 0; // Reset sound to beginning
-      beepSound.play();
-    } else {
-      // Play go.mp3 for the last item (go)
-      const goSound = new Audio('sounds/go.mp3');
-      goSound.play();
-    }
-    
-    await delay(1500);
-  }
+      for (let i = 0; i < countdownImages.length; i++) {
+        countdownDisplay.src = countdownImages[i];
+        
+        // Play beep for 3,2,1 and go.mp3 for the last one
+        if (i < countdownImages.length - 1) {
+          beepSound.currentTime = 0; // Reset sound to beginning
+          beepSound.play();
+        } else {
+          // Play go.mp3 for the last item (go)
+          const goSound = new Audio('sounds/go.mp3');
+          goSound.play();
+        }
+        
+        await delay(1500);
+      }
       
       // Hide the start screen and reveal the card.
       startScreen.style.display = 'none';
@@ -331,6 +382,12 @@
 
     // Set up a new question and auto-play the question sound.
     async function startQuestionAuto() {
+      // Check if we've reached the max questions
+      if (questionCount >= MAX_QUESTIONS) {
+        showPlayAgainScreen();
+        return;
+      }
+      
       // Hide interaction container and reset timer.
       interactionContainer.style.opacity = '0';
       timerContainer.style.opacity = '0';
@@ -348,18 +405,30 @@
         box.style.pointerEvents = 'auto';
       });
 
-      // Generate a new question.
+      // Generate a new question that hasn't been used yet
       const keys = Object.keys(answerKey);
-      const randomIndex = Math.floor(Math.random() * keys.length);
-      const correctLetter = keys[randomIndex];
+      const availableKeys = keys.filter(key => !usedQuestions.includes(key));
+      
+      // If we've used all questions, reset the used questions array (shouldn't happen with MAX_QUESTIONS)
+      if (availableKeys.length === 0) {
+        usedQuestions = [];
+        availableKeys = [...keys];
+      }
+      
+      const randomIndex = Math.floor(Math.random() * availableKeys.length);
+      const correctLetter = availableKeys[randomIndex];
       const word = answerKey[correctLetter];
+      
+      // Mark this question as used
+      usedQuestions.push(correctLetter);
+      questionCount++;
 
       currentQuestion = {
         correctLetter: correctLetter,
         // In this new flow, the question sound is auto-played immediately.
-        questionSound: `sounds/alphabet/${word}.MP3`,
-        answerSound: `sounds/alphabet/${correctLetter}.MP3`,
-        image: `images/animals/chicken.png`
+        questionSound: `sounds/abakada/${word}.MP3`,
+        answerSound: `sounds/abakada/${correctLetter}.MP3`,
+        image: `images/abc/abakada/${word}.png`
       };
 
       // Update card image.
@@ -379,6 +448,17 @@
       const qAudio = new Audio(currentQuestion.questionSound);
       qAudio.play();
       qAudio.addEventListener('ended', moveCard);
+    }
+    
+    // Show the play again screen
+    function showPlayAgainScreen() {
+      // Hide all game elements
+      cardWrapper.style.display = 'none';
+      interactionContainer.style.opacity = '0';
+      timerContainer.style.opacity = '0';
+      
+      // Show play again button
+      playAgainBtn.style.display = 'block';
     }
 
     // Slide the card to reveal the letter boxes and start the timer.
@@ -484,6 +564,9 @@
       startButtonAnimation();
       // When the start screen is clicked, show the countdown.
       startScreen.addEventListener('click', showCountdown);
+      
+      // Add event listener for play again button
+      playAgainBtn.addEventListener('click', resetGame);
     });
 
     // Preload audio files
