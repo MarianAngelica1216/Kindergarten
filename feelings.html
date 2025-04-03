@@ -1,25 +1,298 @@
-<html>
-    <head>
-        <style>
-        .container {
-            width: 100vw; /* Full viewport width */
-            height: 100vh; /* Full viewport height */
-            overflow-x: auto; /* Enable horizontal scrolling */
-            overflow-y: hidden; /* Prevent vertical scrolling */
-            white-space: nowrap; /* Prevent wrapping */
-          }
-          
-          .background-image {
-            height: 100%; /* Fit the height to the container */
-            width: auto; /* Adjust width proportionally */
-            display: block; /* Ensure proper rendering */
-          }
-          </style>
-    </head>
-    <body>
-        <div class="container">
-            <img src="images/feelings_bg.png" class="background-image">
-          </div>
-          
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Playground Zoom with Horizontal Scrolling</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+    }
+    
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow-x: auto;
+      overflow-y: hidden;
+      cursor: grab;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .container::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .scene {
+      position: relative;
+      height: 100%;
+      width: max-content;
+    }
+    
+    .background {
+      height: 100%;
+      width: auto;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      transition: filter 0.5s ease;
+    }
+    
+    .items-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+    
+    .clickable-item {
+      position: absolute;
+      cursor: pointer;
+      pointer-events: auto;
+      z-index: 2;
+      /* For proper placement of children */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* Position the selected image ABOVE the kid image (vertically) */
+    .selected-img {
+      width: 100px;
+      height: auto;
+      margin-bottom: 10px; /* Space between the selected image and kid image */
+    }
+    
+    /* Position the kid image */
+    .kid-img {
+      width: 100px;
+      height: auto;
+    }
+    
+    .side-panel {
+      position: fixed;
+      top: 0;
+      right: -200px;
+      width: 200px;
+      height: 100%;
+      background: white;
+      box-shadow: -5px 0 10px rgba(0,0,0,0.3);
+      transition: right 0.5s ease-in-out;
+      padding: 20px;
+      z-index: 10;
+    }
+    
+    .side-panel button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <div class="scene" id="scene">
+      <img class="background" id="background" src="images/feelings/bg-playground.png" alt="Background">
+      
+      <div class="items-layer">
+        <!-- First clickable item - Notice the order of images is changed -->
+        <div class="clickable-item" style="bottom: 30%; left: 10%;" data-id="kid-scared">
+          <img class="selected-img" src="images/feelings/selected-null.png">
+          <img class="kid-img" src="images/feelings/kid-scared.png" alt="Scared Kid">
+        </div>
+        
+        <!-- Second clickable item -->
+        <div class="clickable-item" style="top: 30%; right: 10%;" data-id="kid-sad">
+          <img class="selected-img" src="images/feelings/selected-null.png">
+          <img class="kid-img" src="images/feelings/kid-sad.png" alt="Sad Kid">
+        </div>
+        
+        <!-- Additional items -->
+        <div class="clickable-item" style="top: 20%; left: 40%;" data-id="kid-surprised">
+          <img class="selected-img" src="images/feelings/selected-null.png">
+          <img class="kid-img" src="images/feelings/kid-surprised.png" alt="Surprised Kid">
+        </div>
+        
+        <div class="clickable-item" style="bottom: 20%; right: 30%;" data-id="kid-angry">
+          <img class="selected-img" src="images/feelings/selected-null.png">
+          <img class="kid-img" src="images/feelings/kid-angry.png" alt="Angry Kid">
+        </div>
+        
+        <div class="clickable-item" style="top: 40%; left: 70%;" data-id="kid-happy">
+          <img class="selected-img" src="images/feelings/selected-null.png">
+          <img class="kid-img" src="images/feelings/kid-happy.png" alt="Happy Kid">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-panel" id="side-panel">
+    <button onclick="changeFeeling('selected-happy.png')">Happy</button>
+    <button onclick="changeFeeling('selected-sad.png')">Sad</button>
+    <button onclick="changeFeeling('selected-angry.png')">Angry</button>
+    <button onclick="changeFeeling('selected-surprised.png')">Surprised</button>
+    <button onclick="changeFeeling('selected-scared.png')">Scared</button>
+  </div>
+
+  <script>
+    const container = document.getElementById('container');
+    const scene = document.getElementById('scene');
+    const background = document.getElementById('background');
+    const sidePanel = document.getElementById('side-panel');
+    
+    let isZoomed = false;
+    let activeItem = null;
+    let originalContainerScroll = 0;
+    
+    // For drag-to-scroll functionality
+    let isDragging = false;
+    let startX;
+    let scrollLeft;
+    
+    // Enable drag-to-scroll for horizontal scrolling
+    container.addEventListener('mousedown', (e) => {
+      if (isZoomed) return; // Disable dragging when zoomed
+      
+      isDragging = true;
+      startX = e.pageX;
+      scrollLeft = container.scrollLeft;
+      container.style.cursor = 'grabbing';
+    });
+    
+    container.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      e.preventDefault();
+      const x = e.pageX;
+      const walk = (x - startX) * 2; // Speed multiplier
+      container.scrollLeft = scrollLeft - walk;
+    });
+    
+    container.addEventListener('mouseup', () => {
+      isDragging = false;
+      container.style.cursor = 'grab';
+    });
+    
+    container.addEventListener('mouseleave', () => {
+      isDragging = false;
+      container.style.cursor = 'grab';
+    });
+    
+    // Handle zoom functionality
+    const items = document.querySelectorAll('.clickable-item');
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (isDragging || isZoomed) return;
+        
+        e.stopPropagation();
+        activeItem = item;
+        
+        // Save original scroll position
+        originalContainerScroll = container.scrollLeft;
+        
+        // Get viewport and scene dimensions
+        const containerRect = container.getBoundingClientRect();
+        
+        // Get item position - target the kid image, not the emotion icon
+        const kidImg = item.querySelector('.kid-img');
+        const itemRect = kidImg.getBoundingClientRect();
+        
+        // Calculate the center point of the kid image relative to viewport
+        const itemCenterX = itemRect.left + (itemRect.width / 2) - containerRect.left + container.scrollLeft;
+        const itemCenterY = itemRect.top + (itemRect.height / 2) - containerRect.top;
+        
+        // Calculate target scroll position to center the item
+        const targetScrollX = itemCenterX - (containerRect.width / 2);
+        
+        // Apply transform to scene for zooming
+        scene.style.transition = 'transform 0.5s ease-out';
+        scene.style.transformOrigin = `${itemCenterX}px ${itemCenterY}px`;
+        scene.style.transform = 'scale(2)';
+        
+        // Darken only the background, not the items
+        background.style.filter = 'brightness(0.5)';
+        
+        // Scroll to center the item
+        container.scrollTo({
+          left: targetScrollX,
+          behavior: 'smooth'
+        });
+        
+        // Show side panel
+        sidePanel.style.right = '0';
+        
+        isZoomed = true;
+        
+        // Disable scrolling while zoomed
+        container.style.overflowX = 'hidden';
+      });
+    });
+    
+    // Handle exit zoom
+    document.addEventListener('click', (e) => {
+      if (!isZoomed) return;
+      if (e.target.closest('.clickable-item') || e.target.closest('.side-panel')) return;
+      
+      // Reset zoom
+      scene.style.transform = 'scale(1)';
+      scene.style.transition = 'transform 0.5s ease-out';
+      
+      // Remove background darkening
+      background.style.filter = '';
+      
+      // Hide side panel
+      sidePanel.style.right = '-200px';
+      
+      // Restore original scroll position
+      container.scrollLeft = originalContainerScroll;
+      
+      // Re-enable scrolling
+      container.style.overflowX = 'auto';
+      
+      isZoomed = false;
+      activeItem = null;
+    });
+    
+    // Change feeling function
+    function changeFeeling(feeling) {
+      if (activeItem) {
+        activeItem.querySelector('.selected-img').src = `images/feelings/${feeling}`;
+      }
+    }
+    
+    // Load event to set proper dimensions
+    window.addEventListener('load', () => {
+      // Wait for background image to load
+      background.onload = function() {
+        // Set scene width to exactly match the background image width
+        const bgWidth = background.naturalWidth;
+        const bgHeight = background.naturalHeight;
+        const containerHeight = container.clientHeight;
+        
+        // Calculate proportional width to maintain aspect ratio
+        const scaledWidth = (bgWidth / bgHeight) * containerHeight;
+        
+        // Set scene width to exactly match the scaled background size
+        scene.style.width = `${scaledWidth}px`;
+        
+        // Also set the items-layer width to match
+        document.querySelector('.items-layer').style.width = `${scaledWidth}px`;
+      };
+      
+      // If the image is already loaded, call onload manually
+      if (background.complete) {
+        background.onload();
+      }
+    });
+  </script>
+</body>
 </html>
