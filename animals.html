@@ -16,6 +16,7 @@
       overflow: hidden;
       font-family: "Fredoka", sans-serif;
       font-weight: bold;
+      margin: 0;
     }
 
     .back-button {
@@ -25,7 +26,32 @@
       top: 20px;
       left: 20px;
       cursor: pointer;
-      z-index: 10;
+      z-index: 100;
+    }
+
+    /* Splash Screen Styles */
+    #splashScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    #splashScreen img {
+      max-width: 80%;
+      height: auto;
+      margin-bottom: 20px;
     }
 
     /* Container for all hidden animal triggers */
@@ -173,7 +199,7 @@
     #songButton {
       position: fixed;
       bottom: 10px;
-      right: 20px; /* Align to the right */
+      right: 20px;
       width: 250px;
       height: auto;
       cursor: pointer;
@@ -220,6 +246,12 @@
   </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splashScreen">
+    <img src="videos/farm.gif" alt="Farm Animation" style = "width: 400px;" />
+    <div>click anywhere to start</div>
+  </div>
+
   <a href="javascript:history.back()" id="backButton">
     <img src="images/back.png" alt="Back" class="back-button" />
   </a>
@@ -240,8 +272,7 @@
     <!-- DUCK / POND -->
     <div class="hidden-animal" id="trigger-duck" data-animal="duck">
       <img src="images/animals/farm-animals-pond.png" alt="Pond" />
-      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" 
-      />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" />
     </div>
 
     <!-- HORSE / HAY -->
@@ -253,8 +284,7 @@
     <!-- PIG / MUD -->
     <div class="hidden-animal" id="trigger-pig" data-animal="pig">
       <img src="images/animals/farm-animals-mud.png" alt="Mud" />
-      <img src="images/animals/bubble.png" class="bubble" alt="Bubble"
-      />
+      <img src="images/animals/bubble.png" class="bubble" alt="Bubble" />
     </div>
   </div>
 
@@ -304,6 +334,12 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      // Hide splash screen on click
+      const splashScreen = document.getElementById("splashScreen");
+      splashScreen.addEventListener("click", function() {
+        splashScreen.style.display = "none";
+      });
+
       // Background music setup
       const bgMusic = document.getElementById("bgMusic");
       bgMusic.volume = 0.0; // Start with volume 0 for fade in
@@ -327,7 +363,6 @@
         fadeInMusic();
       }).catch(error => {
         console.log("Autoplay prevented. User interaction required to play music.");
-        // On mobile, we might need user interaction first, so we'll handle this later
       });
 
       // Add an event to play music after first user interaction if autoplay was prevented
@@ -521,18 +556,17 @@
       // When the song button is clicked, show the video overlay and pause background music
       songButton.addEventListener("click", function () {
         videoOverlay.classList.add("active");
-        bgMusic.pause(); // Pause background music when video plays
+        bgMusic.pause();
         videoPlayer.play();
       });
 
       // Clicking outside the video (on the overlay) will close the video overlay
       videoOverlay.addEventListener("click", function (e) {
-        // Only close if the click is on the overlay and not the video itself
         if (e.target === videoOverlay) {
           videoOverlay.classList.remove("active");
           videoPlayer.pause();
           videoPlayer.currentTime = 0;
-          bgMusic.play(); // Resume background music when video is closed
+          bgMusic.play();
         }
       });
 
@@ -542,7 +576,7 @@
         videoOverlay.classList.remove("active");
       });
 
-      // Make sure background music loops
+      // Ensure background music loops
       bgMusic.addEventListener('ended', function() {
         this.currentTime = 0;
         this.play();

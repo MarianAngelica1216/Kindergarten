@@ -1,231 +1,476 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
-        <style>
-            body {
-                background-image: url("images/numbers/bg-number.png");
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                position: relative;
-                height: 100vh;
-                overflow-y: hidden;
-                margin: 0px;
-                overflow-x: hidden; 
-                font-family: fredoka;
-            }
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background-image: url("images/numbers/bg-numbers.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        position: relative;
+        height: 100vh;
+        overflow-y: hidden;
+        margin: 0;
+        overflow-x: hidden; 
+        font-family: fredoka;
+      }
 
-            .back-button {
-                width: 90px;
-                height: auto;
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                cursor: pointer;
-                z-index: 10;
-            }
-            
-            /* Items container at the top */
-            .items-container {
-                position: absolute;
-                top: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                gap: 10px;
-                z-index: 30;
-            }
+      /* Splash Screen Styles */
+      #splashScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 24px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: normal;
+      }
+      #splashScreen img {
+        max-width: 80%;
+        height: auto;
+        margin-bottom: 20px;
+      }
 
-            /* Customer behind the frame */
-            .container-behind-counter {
-                position: absolute;
-                right: 120px;        
-                top: 150px;        
-                z-index: 1; /* Behind the stall */
-            }
+      .black{
+        width:100%;
+        height: 100%;
+        z-index: 1;
+        background-color: rgba(255, 255, 255, 0.2); 
+        backdrop-filter: blur(2px); 
+        -webkit-backdrop-filter: blur(2px); 
+      }
 
-            .customer {
-                max-width: 250px;
-            }
+      .clip-board {
+        position:absolute;
+        left:320px;
+        top:130px;
+        max-width: 660px;
+        z-index: 2;
+      }
 
-            /* Frame/stall */
-            .frame {
-                position: absolute;
-                top: -100px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 117%;
-                z-index: 2; 
-                overflow: hidden;
-                overflow-x: hidden;
-            }
+      .clipboard {
+        position: absolute;
+        left: 520px;
+        top: 130px;
+        max-width: 450px;
+        z-index: 5;
+        transform: translateY(100vh); /* Start offscreen at the bottom */
+      }
 
-            /* Speech bubble at the top */
-            .speech-bubble {
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: white;
-                padding: 20px;
-                border-radius: 50px;
-                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-                font-size: 40px;
-                font-weight: bold;
-                z-index: 25;
-            }
+      .back-button {
+        width: 90px;
+        height: auto;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        cursor: pointer;
+        z-index: 150;
+      }
+      
+      /* Items container at the top */
+      .items-container {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 50;
+      }
 
-            .speech-bubble::after {
-                content: "";
-                position: absolute;
-                bottom: -10px;
-                left: 50%;
-                transform: translateX(-50%);
-                border-width: 10px;
-                border-style: solid;
-                border-color: white transparent transparent transparent;
-            }
-
-            .interaction-container {
-                position: absolute;
-                left: 10px;
-                top: 50%;
-                opacity: 0;
-                z-index: 1;
-            }
-
-            .number-boxes {
-                transform: translateX(-300%);
-                top: 120px;
-                position: relative;
-                width: 170px;
-                height: 150px;
-                display: grid;
-                grid-template-columns: repeat(2, 200px);
-                grid-template-rows: repeat(2, 190px);
-                gap: 20px;
-            }
+      /* Container for the number boxes */
+      .number-boxes {
+        transform: translateX(-300%);
+        top: 120px;
+        position: relative;
+        width: 170px;
+        height: 150px;
+        display: grid;
+        grid-template-columns: repeat(2, 200px);
+        grid-template-rows: repeat(2, 190px);
+        gap: 20px;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+      }
  
-            .number-box {
-                width: 200px;
-                height: 190px;
-                background-color: white;
-                border: 4px solid;
-                border-radius: 30px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 80px;
-                font-weight: bold;
-                color: black;
-                transition: transform 0.3s ease;
-                cursor: pointer;
-            }
+      .number-box {
+        width: 200px;
+        height: 190px;
+        background-color: white;
+        border: 4px solid;
+        border-radius: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 80px;
+        font-weight: bold;
+        color: black;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+      }
 
-            .items-picture-container {
-                position: absolute; 
-                top: 50%; 
-                left: 50%; 
-                transform: translate(-30%, -50%);
-                background-color: skyblue;
-                width: 450px; 
-                height: 400px;
-                z-index: 5; 
-                padding: 5px;
-            }
+      /* Items Picture Container for apples */
+      .items-picture-container {
+        position: absolute; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-32%, -50%);
+        width: 410px; 
+        height: 320px;
+        z-index: 25; 
+        padding: 20px;
+      }
 
-            .items-picture-container img.apple {
-                max-width: 80px;
-                position: absolute;
-            }
+      .items-picture-container img {
+        max-width: 80px;
+        position: absolute;
+        opacity: 0;
+        transition: opacity 1s ease;
+      }
 
-            /* Shuffle Button styling */
-            .shuffle-button {
-                position: absolute;
-                bottom: 10px;
-                right: 5px;
-                font-size: 10px;
-                cursor: pointer;
-                z-index: 10;
-                background-color: white;
-                border: 2px solid #ccc;
-                border-radius: 5px;
-            }
-        </style>
-    </head>
-    <body>
-        <a href="javascript:history.back()" id="backButton">
-            <img src="images/back.png" alt="Back" class="back-button" />
-        </a>
-        <!-- Items Container (At the Top) -->
-        <div class="items-container">
-            <div class="number-boxes">
-                <div class="number-box red"></div>
-                <div class="number-box blue"></div>
-                <div class="number-box green"></div>
-                <div class="number-box pink"></div>
-            </div>
-        </div>
+      /* Customer container */
+      .container-behind-counter {
+        position: absolute;
+        right: 120px;        
+        top: 150px;        
+        z-index: 1;
+      }
 
-        <!-- Items Picture Container with Shuffle Button -->
-        <div class="items-picture-container" id="itemsContainer">
-            <!-- Apples will be inserted here -->
-            <button class="shuffle-button" id="shuffleButton">Shuffle</button>
-        </div>
+      .customer {
+        max-width: 250px;
+        transform: translateX(100vw); /* start offscreen */
+        transition: transform 1s ease-out;
+      }
 
-        <!-- Speech Bubble (At the Top) -->
-        <div class="speech-bubble"></div>
+      /* Food stall/frame */
+      .frame {
+        position: absolute;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 117%;
+        z-index: 2; 
+        overflow: hidden;
+      }
 
-        <!-- Customer (Behind the Stall) -->
-        <div class="container-behind-counter">
-            <img src="images/numbers/customers/1.png" class="customer">
-        </div>
+      /* Speech bubble styling */
+      .speech-bubble {
+        position: absolute;
+        max-width: 90%;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 20px;
+        border-radius: 50px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        font-size: 35px;
+        font-weight: bold;
+        z-index: 50;
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.8s ease;
+        white-space: nowrap;
+      }
 
-        <!-- Food Stall -->
-        <img src="images/numbers/food-stall.png" class="frame">
+      .speech-bubble::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 10px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="javascript:history.back()" id="backButton">
+      <img src="images/back.png" alt="Back" class="back-button" />
+    </a>
 
-        <script>
-            function shuffleApples() {
-    // Remove existing apple images
-    itemsContainer.querySelectorAll('img.apple').forEach(img => img.remove());
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+      <img src="videos/numbers.gif" alt="Farm Animation" style="width: 400px;" />
+      <div>click anywhere to start</div>
+    </div>
 
-    const count = Math.floor(Math.random() * 10) + 1;
-    const appleSize = 80;
-    const gap = 20;
-    const maxCols = 4;
+    <!-- Items Container (At the Top) for Number Boxes -->
+    <div class="items-container">
+      <div class="number-boxes" id="numberBoxes">
+        <div class="number-box"></div>
+        <div class="number-box"></div>
+        <div class="number-box"></div>
+        <div class="number-box"></div>
+      </div>
+    </div>
 
-    const cols = Math.min(count, maxCols);
-    const rows = Math.ceil(count / maxCols);
+    <!-- Items Picture Container (for Apples) -->
+    <div class="items-picture-container" id="itemsContainer">
+      <!-- Apples will be added here -->
+    </div>
 
-    const groupWidth = (cols * appleSize) + ((cols - 1) * gap);
-    const groupHeight = (rows * appleSize) + ((rows - 1) * gap);
+    <!-- Speech Bubble -->
+    <div class="speech-bubble" id="speechBubble"></div>
 
-    const containerWidth = itemsContainer.clientWidth;
-    const containerHeight = itemsContainer.clientHeight;
+    <!-- Customer (Behind the Stall) -->
+    <div class="container-behind-counter">
+      <img src="images/numbers/customers/1.png" class="customer" id="customer">
+    </div>
+    <img src="images/numbers/clipboardd.png" class="clipboard" id="clipboard">
+    <!-- Food Stall -->
+    <img src="images/numbers/food-stall.png" class="frame">
+    
+    <div class="black"></div>
+    <audio id="bgMusic" loop>
+        <source src="sounds/bg-music1.mp3" type="audio/mpeg">
+      </audio>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const splashScreen = document.getElementById("splashScreen");
+        const bgMusic = document.getElementById("bgMusic");
 
-    const startX = (containerWidth - groupWidth) / 2;
-    const startY = (containerHeight - groupHeight) / 2;
+        splashScreen.addEventListener("click", function() {
+          splashScreen.style.display = "none";
+          bgMusic.volume = 0.5;  // Adjust volume if needed
+          bgMusic.play();        // Start background music
+          startGame();
+        });
+      });
 
-    for (let i = 0; i < count; i++) {
-        const col = i % maxCols;
-        const row = Math.floor(i / maxCols);
+      // ==== CONFIGURABLE OPTIONS ====
+      const typingDelay = 50;         // Delay per letter (ms)
+      const afterTypingPause = 500;   // Pause after typing before next step (ms)
+      const customerSlideDuration = 1000;  // Time for customer to slide in/out (ms)
+      const fadeDuration = 1000;      // Duration for fading in/out elements (ms)
+      const delayBeforeTyping = 300;  // Delay before typing after customer appears (ms)
+      const delayBeforeFruit = 400;   // Delay after typing before fruit shows (ms)
+      const delayBeforeNumbers = 600; // Delay after fruit appears before number boxes
+      const delayBeforeNextCustomer = 1500; // Time to wait before new customer starts
+      const clipboardSlideDuration = 500;   // Duration for clipboard slide animation (ms)
+      // ===============================
 
-        const appleImg = document.createElement('img');
-        appleImg.src = "images/apple.png";
-        appleImg.classList.add("apple");
-        appleImg.style.left = `${startX + col * (appleSize + gap)}px`;
-        appleImg.style.top = `${startY + row * (appleSize + gap)}px`;
+      const speechTemplates = [
+        "I think I want some _.",
+        "How much _ should I buy?",
+        "Can I have some _ please?",
+        "I love _. Can I get some?",
+        "Those _ look tasty! Can I have some?",
+        "I feel like eating _.",
+        "Could I buy some _?",
+        "I want to try some _. How many should I get?",
+        "Do you have any _? I'd love some!",
+        "Those _ look so fresh! Can I get some?",
+        "I'm hungry for _. Can I have a few?",
+        "I think _ would be perfect for today!"
+      ];
 
-        itemsContainer.appendChild(appleImg);
-    }
+      const fruits = ["apples", "bananas", "oranges", "grapes", "strawberries"];
+      const thankYouMessages = [
+        "Thank you!",
+        "This will keep me full!",
+        "This looks fresh!",
+        "Delicious!",
+        "Yum!",
+        "Thanks! I love _!",
+        "I appreciate it!",
+        "Perfect! These look amazing!",
+        "Wow, these _ look so good!",
+        "These _ are just what I needed."
+      ];
+
+      let currentFruit = "apples";
+
+      function getRandom(array) {
+        return array[Math.floor(Math.random() * array.length)];
+      }
+
+      function getRandomSpeechAndFruit() {
+        const template = getRandom(speechTemplates);
+        const fruit = getRandom(fruits);
+        return { text: template.replace("_", fruit), fruit: fruit };
+      }
+
+      function getRandomThankYou(fruit) {
+        const thankyou = getRandom(thankYouMessages);
+        return thankyou.replace("_", fruit);
+      }
+
+      function typeText(element, text, callback) {
+        element.textContent = ""; // Clear text BEFORE fade-in
+        let index = 0;
+        const interval = setInterval(() => {
+          element.textContent += text[index];
+          index++;
+          if (index === text.length) {
+            clearInterval(interval);
+            if (callback) setTimeout(callback, afterTypingPause);
+          }
+        }, typingDelay);
+      }
+
+      // Slide clipboard up concurrently (does not block other animations)
+      function slideUpClipboard() {
+        const clipboard = document.getElementById('clipboard');
+        clipboard.style.transition = `transform ${clipboardSlideDuration}ms ease-out`;
+        clipboard.style.transform = "translateY(0)";  // Slide into view
+      }
+
+      function startGame() {
+        const speechBubble = document.getElementById('speechBubble');
+        const boxesContainer = document.getElementById('numberBoxes');
+        const boxes = document.querySelectorAll('.number-box');
+        const itemsContainer = document.getElementById('itemsContainer');
+        const customerImg = document.getElementById('customer');
+        const clipboardImg = document.getElementById('clipboard');
+        
+        // Reset UI elements
+        boxes.forEach(box => {
+          box.style.backgroundColor = "white";
+          box.style.pointerEvents = "auto";
+          box.textContent = "";
+          delete box.dataset.correct;
+        });
+        boxesContainer.style.opacity = 0;
+        itemsContainer.querySelectorAll('img.fruit').forEach(img => img.remove());
+        speechBubble.style.opacity = 0;
+        speechBubble.textContent = "";
+        
+        // Reset customer position (offscreen right)
+        customerImg.style.transition = `transform ${customerSlideDuration}ms ease-out`;
+        customerImg.style.transform = "translateX(100vw)";
+        
+        // Reset clipboard position (offscreen bottom)
+        clipboardImg.style.transition = `none`;
+        clipboardImg.style.transform = "translateY(100vh)";
+        
+        // Load new customer image
+        const randomCustomer = Math.floor(Math.random() * 8) + 1;
+        customerImg.src = "images/numbers/customers/" + randomCustomer + ".png";
+        
+        setTimeout(() => {
+          // Slide customer into view
+          customerImg.style.transform = "translateX(0)";
+          setTimeout(() => {
+            const { text, fruit } = getRandomSpeechAndFruit();
+            currentFruit = fruit;
+            speechBubble.style.opacity = 1;
+            typeText(speechBubble, text, () => {
+              // Start clipboard slide-up concurrently with items fade in
+              slideUpClipboard();
+              const itemCount = fadeInItems(currentFruit);
+              setTimeout(() => {
+                setupNumberBoxes(itemCount);
+                boxesContainer.style.opacity = 1;
+              }, delayBeforeNumbers);
+            });
+          }, delayBeforeTyping);
+        }, 100);
+      }
+
+      function fadeInItems(fruit) {
+        const container = document.getElementById('itemsContainer');
+        const count = Math.floor(Math.random() * 10) + 1;
+        const itemSize = 80, gap = 20, maxCols = 4;
+        const cols = Math.min(count, maxCols);
+        const rows = Math.ceil(count / maxCols);
+        const groupWidth = (cols * itemSize) + ((cols - 1) * gap);
+        const groupHeight = (rows * itemSize) + ((rows - 1) * gap);
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const startX = (containerWidth - groupWidth) / 2;
+        const startY = (containerHeight - groupHeight) / 2;
+      
+        for (let i = 0; i < count; i++) {
+          const col = i % maxCols;
+          const row = Math.floor(i / maxCols);
+          const itemImg = document.createElement('img');
+          itemImg.src = "images/" + fruit + ".png";
+          itemImg.classList.add("fruit");
+          itemImg.style.left = `${startX + col * (itemSize + gap)}px`;
+          itemImg.style.top = `${startY + row * (itemSize + gap)}px`;
+          itemImg.style.opacity = 0;
+          container.appendChild(itemImg);
+          setTimeout(() => {
+            itemImg.style.transition = `opacity ${fadeDuration}ms`;
+            itemImg.style.opacity = 1;
+          }, delayBeforeFruit);
+        }
+        return count;
+      }
+
+      function setupNumberBoxes(correctCount) {
+  const boxes = document.querySelectorAll('.number-box');
+  let uniqueNumbers = new Set();
+
+  // Ensure the correct count is included in the unique numbers
+  uniqueNumbers.add(correctCount);
+
+  // Generate random unique numbers for the remaining boxes
+  while (uniqueNumbers.size < boxes.length) {
+    let num = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    uniqueNumbers.add(num); // Set will automatically ensure uniqueness
+  }
+
+  // Convert Set to an array and shuffle it (optional, if you want the order to be random)
+  uniqueNumbers = Array.from(uniqueNumbers).sort(() => Math.random() - 0.5);
+
+  // Assign numbers to boxes
+  boxes.forEach((box, index) => {
+    const num = uniqueNumbers[index];
+    box.textContent = num;
+    box.dataset.correct = (num === correctCount) ? "true" : "false"; // Mark the correct box
+    box.onclick = onBoxClick; // Add click handler to the boxes
+  });
 }
-// Run once when the page loads
-window.onload = shuffleApples;
-
-// Reattach shuffle button event
-document.getElementById('shuffleButton').addEventListener('click', shuffleApples);
 
 
-        </script>
-    </body>
+      function onBoxClick() {
+        const boxes = document.querySelectorAll('.number-box');
+        boxes.forEach(box => box.style.pointerEvents = "none");
+        const speechBubble = document.getElementById('speechBubble');
+        if (this.dataset.correct === "true") {
+          this.style.backgroundColor = "lightgreen";
+          const message = getRandomThankYou(currentFruit);
+          typeText(speechBubble, message, () => {
+            fadeOutElements(() => {
+              const customerImg = document.getElementById('customer');
+              customerImg.style.transform = "translateX(100vw)";
+              setTimeout(startGame, delayBeforeNextCustomer);
+            });
+          });
+        } else {
+          this.style.backgroundColor = "red";
+          boxes.forEach(box => box.style.pointerEvents = "auto");
+        }
+      }
+
+      function fadeOutElements(callback) {
+        const speechBubble = document.getElementById('speechBubble');
+        const boxesContainer = document.getElementById('numberBoxes');
+        speechBubble.style.opacity = 0;
+        boxesContainer.style.opacity = 0;
+        document.querySelectorAll('#itemsContainer img.fruit').forEach(img => {
+          img.style.transition = `opacity ${fadeDuration}ms`;
+          img.style.opacity = 0;
+        });
+        // Slide the clipboard off (downwards) concurrently
+        const clipboard = document.getElementById('clipboard');
+        clipboard.style.transition = `transform ${clipboardSlideDuration}ms ease-in`;
+        clipboard.style.transform = "translateY(100vh)";
+        setTimeout(callback, fadeDuration);
+      }
+    </script>
+  </body>
 </html>

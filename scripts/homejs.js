@@ -6,6 +6,12 @@ const nextBtn = document.getElementById('nextBtn');
 let currentIndex = 0;
 const totalCards = cardWrappers.length;
 
+function startGame(targetPage) {
+  sessionStorage.setItem("userInteracted", "true");
+  window.location.href = targetPage;
+}
+
+
 function updateCarousel() {
   cardWrappers.forEach((cardWrapper, i) => {
     let offset = i - currentIndex;
