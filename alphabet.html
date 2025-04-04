@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sound Object with Timer and Randomized Letter Boxes</title>
+  <title>Sound Object with Timer, Settings & Randomized Letter Boxes</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,7 +12,6 @@
       overflow: hidden;
       font-family: fredoka, sans-serif;
     }
-
     body {
       background-image: url('images/abc/abc-bg.png');
       background-size: cover;
@@ -23,7 +22,6 @@
       font-family: "Fredoka", sans-serif;
       font-weight: bold;
     }
-
     .back-button {
       width: 90px;
       position: absolute;
@@ -74,8 +72,8 @@
       z-index: -1;
     }
     .sound-object {
-      max-width: 100%;
-      max-height: 100%;
+      max-width: 95%;
+      max-height: 95%;
     }
     .interaction-container {
       position: absolute;
@@ -162,19 +160,85 @@
       width: 500px;
       height: auto;
     }
-    
     /* Countdown image size adjustment */
     #countdownDisplay {
       width: 150px;
       height: 150px;
     }
-    
+    /* Settings button styling */
+    #settingsButton {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      width: 50px;
+      cursor: pointer;
+      z-index: 15;
+    }
+    /* Settings modal styling */
+    #settingsModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 20;
+    }
+    #settingsModal .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    #settingsModal h2 {
+      margin-top: 0;
+    }
+    #settingsModal input[type="number"] {
+      width: 50px;
+      padding: 5px;
+      margin: 10px;
+    }
+    #settingsModal button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+
+  
   <a href="javascript:history.back()" id="backButton">
     <img src="images/back.png" alt="Back" class="back-button" />
   </a>
+  
+  <!-- Settings Button -->
+  <img id="settingsButton" src="images/utils/settings.png" alt="Settings">
+  
+  <!-- Settings Modal -->
+  <div id="settingsModal">
+    <div class="modal-content">
+      <h2>Settings</h2>
+      <div style = "font-size:25px">
+        Autoplay:
+        <img id="autoplaySwitch" src="images/utils/switch-on.png" style="cursor:pointer; width:30px;">
+      </div>
+      <div style = "font-size:25px">
+        Timer (seconds):
+        <input type="number" id="timerInput" value="5" min="1" style = "font-size:15px;font-family:fredoka;">
+      </div>
+      <div>
+        Number of Questions
+        <input type="number" id="numQuestions" min="1" max="100" value="5">
+      </div>
+      <button id="saveSettings">Save</button>
+    </div>
+  </div>
   
   <!-- Start Screen with animated start button -->
   <div id="startScreen">
@@ -183,9 +247,9 @@
   </div>
   
   <!-- Play Again Button (initially hidden) -->
-<div id="playAgain" style="display:none; position:absolute; top:50%; left:50%; transform: translate(-50%,-50%); z-index:10;">
-  <img src="images/abc/playagain.png" alt="Play Again" style="width:300px; cursor:pointer;">
-</div>
+  <div id="playAgain" style="display:none; position:absolute; top:50%; left:50%; transform: translate(-50%,-50%); z-index:10;">
+    <img src="images/playagain.png" alt="Play Again" style="width:300px; cursor:pointer;">
+  </div>
 
   <div class="container">
     <div class="items-container">
@@ -215,370 +279,417 @@
 
   <script>
     // Answer key mapping letter to word.
-    const answerKey = {
-      Aa: "aso",
-      Bb: "bola",
-      Cc: "cactus",
-      Dd: "damit",
-      Ee: "elepante",
-      Ff: "fries",
-      Gg: "guitara",
-      Hh: "hikaw",
-      Ii: "itlog",
-      Jj: "jeepney",
-      Kk: "kamay",
-      Ll: "langgam",
-      Mm: "mangga",
-      Nn: "nota",
-      Ññ: "santo-nino",
-      Nng: "ngiti",
-      Oo: "oso",
-      Pp: "pusa",
-      Qq: "quezon",
-      Rr: "regalo",
-      Ss: "sapatos",
-      Tt: "talong",
-      Uu: "ulan",
-      Vv: "venus",
-      Ww: "walis",
-      Xx: "xray",
-      Yy: "yoyo",
-      Zz: "zoo"
-    };
+const answerKey = {
+  Aa: "aso",
+  Bb: "bola",
+  Cc: "cactus",
+  Dd: "damit",
+  Ee: "elepante",
+  Ff: "fries",
+  Gg: "guitara",
+  Hh: "hikaw",
+  Ii: "itlog",
+  Jj: "jeepney",
+  Kk: "kamay",
+  Ll: "langgam",
+  Mm: "mangga",
+  Nn: "nota",
+  Ññ: "santo-nino",
+  Nng: "ngiti",
+  Oo: "oso",
+  Pp: "pusa",
+  Qq: "quezon",
+  Rr: "regalo",
+  Ss: "sapatos",
+  Tt: "talong",
+  Uu: "ulan",
+  Vv: "venus",
+  Ww: "walis",
+  Xx: "xray",
+  Yy: "yoyo",
+  Zz: "zoo"
+};
 
+// Game settings (default values)
+let autoplay = true;
+let timerDuration = 5000; // in milliseconds
+let maxQuestions = 5; // Default number of questions
 
-    // DOM elements
-    const cardWrapper = document.getElementById('cardWrapper');
-    const interactionContainer = document.getElementById('interactionContainer');
-    const timerContainer = document.getElementById('timerContainer');
-    const pie = document.getElementById('pie');
-    const letterBoxes = document.querySelectorAll('.letter-box');
-    const cardImg = document.querySelector('.sound-object');
-    const startScreen = document.getElementById('startScreen');
-    const startButtonImg = document.getElementById('startButtonImg');
-    const countdownDisplay = document.getElementById('countdownDisplay');
-    const playAgainBtn = document.getElementById('playAgain');
+// Calculate timer step based on timerDuration
+const interval = 50;
+let step = (360 / timerDuration) * interval;
 
-    // Background music element
-    const backgroundMusic = new Audio('sounds/gamemusic.mp3');
-    const beepSound = new Audio('sounds/beep.mp3');
-    
-    // Timer variables.
-    let timerEnded = false;
-    let angle = 360;
-    const duration = 5000; // 5 seconds countdown timer for letter boxes
-    const interval = 50;
-    const step = (360 / duration) * interval;
-    let timer;
+// DOM elements
+const cardWrapper = document.getElementById('cardWrapper');
+const interactionContainer = document.getElementById('interactionContainer');
+const timerContainer = document.getElementById('timerContainer');
+const pie = document.getElementById('pie');
+const letterBoxes = document.querySelectorAll('.letter-box');
+const cardImg = document.querySelector('.sound-object');
+const startScreen = document.getElementById('startScreen');
+const startButtonImg = document.getElementById('startButtonImg');
+const countdownDisplay = document.getElementById('countdownDisplay');
+const playAgainBtn = document.getElementById('playAgain');
+const settingsButton = document.getElementById('settingsButton');
+const settingsModal = document.getElementById('settingsModal');
+const autoplaySwitch = document.getElementById('autoplaySwitch');
+const timerInput = document.getElementById('timerInput');
+const numQuestionsInput = document.getElementById('numQuestions');
+const saveSettingsBtn = document.getElementById('saveSettings');
 
-    // Global question object.
-    let currentQuestion = null;
-    // Track used questions
-    let usedQuestions = [];
-    // Track question count
-    let questionCount = 0;
-    // Max questions before showing play again
-    const MAX_QUESTIONS = 5;
-    
+// Audio elements
+const backgroundMusic = new Audio('sounds/gamemusic.mp3');
+const beepSound = new Audio('sounds/beep.mp3');
+const playAgainMusic = new Audio('sounds/end-music.mp3');
 
-    // Start button animation variables.
-    const startImages = [
-      'images/abc/start1.png',
-      'images/abc/start2.png',
-      'images/abc/start3.png',
-    ];
-    let startFrame = 0;
-    let startAnimInterval;
+// Timer variables.
+let timerEnded = false;
+let angle = 360;
+let timer;
 
-    // Countdown images.
-    const countdownImages = [
-      'images/abc/countdown3.png',
-      'images/abc/countdown2.png',
-      'images/abc/countdown1.png',
-      'images/abc/go.png'
-    ];
+// Global question object.
+let currentQuestion = null;
+// Track used questions
+let usedQuestions = [];
+// Track question count
+let questionCount = 0;
 
-    // Utility: play audio and return a promise.
-    function playAudio(src) {
-      return new Promise(resolve => {
-        const audio = new Audio(src);
-        audio.play();
-        audio.addEventListener('ended', () => resolve());
-      });
+// Start button animation variables.
+const startImages = [
+  'images/abc/start1.png',
+  'images/abc/start2.png',
+  'images/abc/start3.png',
+];
+let startFrame = 0;
+let startAnimInterval;
+
+// Countdown images.
+const countdownImages = [
+  'images/abc/countdown3.png',
+  'images/abc/countdown2.png',
+  'images/abc/countdown1.png',
+  'images/abc/go.png'
+];
+
+// Utility: play audio and return a promise.
+function playAudio(src) {
+  return new Promise(resolve => {
+    const audio = new Audio(src);
+    audio.play();
+    audio.addEventListener('ended', () => resolve());
+  });
+}
+
+// Utility: delay for given milliseconds.
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Utility: shuffle an array.
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// Animate the start button images in a loop.
+function startButtonAnimation() {
+  startAnimInterval = setInterval(() => {
+    startFrame = (startFrame + 1) % startImages.length;
+    startButtonImg.src = startImages[startFrame];
+  }, 300);
+}
+
+// Reset the game state for a new game.
+function resetGame() {
+  usedQuestions = [];
+  questionCount = 0;
+  
+  // Hide play again button
+  playAgainBtn.style.display = 'none';
+  
+  // Show start screen
+  startScreen.style.display = 'block';
+  startButtonImg.style.display = 'block';
+  countdownDisplay.style.display = 'none';
+  
+  // Restart the button animation
+  startButtonAnimation();
+}
+
+// Show the countdown (using countdown images) then call the question auto-start.
+async function showCountdown() {
+  clearInterval(startAnimInterval);
+  startButtonImg.style.display = 'none';
+  countdownDisplay.style.display = 'block';
+  countdownDisplay.style.width = '150px';
+  for (let i = 0; i < countdownImages.length; i++) {
+    countdownDisplay.src = countdownImages[i];
+    if (i < countdownImages.length - 1) {
+      beepSound.currentTime = 0;
+      beepSound.play();
+    } else {
+      const goSound = new Audio('sounds/go.mp3');
+      goSound.play();
     }
+    await delay(1200);
+  }
+  startScreen.style.display = 'none';
+  cardWrapper.style.display = 'block';
+  startQuestionAuto();
+}
 
-    // Utility: delay for given milliseconds.
-    function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
+// Set up a new question and auto-play the question sound (or wait for user click if autoplay is off).
+async function startQuestionAuto() {
+  if (questionCount >= maxQuestions) {
+    showPlayAgainScreen();
+    return;
+  }
+  
+  interactionContainer.style.opacity = '0';
+  timerContainer.style.opacity = '0';
+  angle = 360;
+  pie.style.setProperty('--angle', angle + 'deg');
+  timerEnded = false;
+  cardWrapper.classList.remove('moved');
+  cardWrapper.style.pointerEvents = 'none';
+  letterBoxes.forEach(box => {
+    box.classList.remove('selected');
+    box.style.pointerEvents = 'auto';
+    // Reset border color (if previously changed)
+    box.style.backgroundColor = "";
+  });
+  
+  const keys = Object.keys(answerKey);
+  let availableKeys = keys.filter(key => !usedQuestions.includes(key));
+  if (availableKeys.length === 0) {
+    usedQuestions = [];
+    availableKeys = [...keys];
+  }
+  const randomIndex = Math.floor(Math.random() * availableKeys.length);
+  const correctLetter = availableKeys[randomIndex];
+  const word = answerKey[correctLetter];
+  usedQuestions.push(correctLetter);
+  questionCount++;
 
-    // Utility: shuffle an array.
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
+  currentQuestion = {
+    correctLetter: correctLetter,
+    questionSound: `sounds/abakada/${word}.MP3`,
+    answerSound: `sounds/abakada/${correctLetter}.MP3`,
+    image: `images/abc/abakada/${word}.png`
+  };
 
-    // Animate the start button images in a loop.
-    function startButtonAnimation() {
-      startAnimInterval = setInterval(() => {
-        startFrame = (startFrame + 5) % startImages.length;
-        startButtonImg.src = startImages[startFrame];
-      }, 300); // change frame every 300ms
-    }
+  cardImg.src = currentQuestion.image;
 
-    // Reset the game state for a new game
-    function resetGame() {
-      usedQuestions = [];
-      questionCount = 0;
-      
-      // Hide play again button
-      playAgainBtn.style.display = 'none';
-      
-      // Show start screen
-      startScreen.style.display = 'block';
-      startButtonImg.style.display = 'block';
-      countdownDisplay.style.display = 'none';
-      
-      // Restart the button animation
-      startButtonAnimation();
-    }
+  // Build answer options.
+  let otherKeys = keys.filter(letter => letter !== correctLetter);
+  shuffleArray(otherKeys);
+  const wrongAnswers = otherKeys.slice(0, 3);
+  const options = [correctLetter, ...wrongAnswers];
+  shuffleArray(options);
+  letterBoxes.forEach((box, index) => {
+    box.querySelector('.letter').textContent = options[index];
+    // Reset border color in case of previous feedback
+    box.style.borderColor = "";
+  });
 
-    // Show the countdown (using countdown images) then call the question auto-start.
-    async function showCountdown() {
-      // Optionally, stop the start button animation if still running.
-      clearInterval(startAnimInterval);
-      
-      // Hide start button and show countdown display
-      startButtonImg.style.display = 'none';
-      countdownDisplay.style.display = 'block';
-      countdownDisplay.style.width = '150px';
-      
-      // Loop through countdown images, 1 second each with beep sound.
-      for (let i = 0; i < countdownImages.length; i++) {
-        countdownDisplay.src = countdownImages[i];
-        
-        // Play beep for 3,2,1 and go.mp3 for the last one
-        if (i < countdownImages.length - 1) {
-          beepSound.currentTime = 0; // Reset sound to beginning
-          beepSound.play();
-        } else {
-          // Play go.mp3 for the last item (go)
-          const goSound = new Audio('sounds/go.mp3');
-          goSound.play();
-        }
-        
-        await delay(1500);
-      }
-      
-      // Hide the start screen and reveal the card.
-      startScreen.style.display = 'none';
-      cardWrapper.style.display = 'block';
-      
-      // Start the question automatically.
-      startQuestionAuto();
-    }
-
-    // Set up a new question and auto-play the question sound.
-    async function startQuestionAuto() {
-      // Check if we've reached the max questions
-      if (questionCount >= MAX_QUESTIONS) {
-        showPlayAgainScreen();
-        return;
-      }
-      
-      // Hide interaction container and reset timer.
-      interactionContainer.style.opacity = '0';
-      timerContainer.style.opacity = '0';
-      angle = 360;
-      pie.style.setProperty('--angle', angle + 'deg');
-      timerEnded = false;
-      
-      // Ensure card is centered and clickable is disabled.
-      cardWrapper.classList.remove('moved');
-      cardWrapper.style.pointerEvents = 'none';
-
-      // Reset letter boxes.
-      letterBoxes.forEach(box => {
-        box.classList.remove('selected');
-        box.style.pointerEvents = 'auto';
-      });
-
-      // Generate a new question that hasn't been used yet
-      const keys = Object.keys(answerKey);
-      const availableKeys = keys.filter(key => !usedQuestions.includes(key));
-      
-      // If we've used all questions, reset the used questions array (shouldn't happen with MAX_QUESTIONS)
-      if (availableKeys.length === 0) {
-        usedQuestions = [];
-        availableKeys = [...keys];
-      }
-      
-      const randomIndex = Math.floor(Math.random() * availableKeys.length);
-      const correctLetter = availableKeys[randomIndex];
-      const word = answerKey[correctLetter];
-      
-      // Mark this question as used
-      usedQuestions.push(correctLetter);
-      questionCount++;
-
-      currentQuestion = {
-        correctLetter: correctLetter,
-        // In this new flow, the question sound is auto-played immediately.
-        questionSound: `sounds/abakada/${word}.MP3`,
-        answerSound: `sounds/abakada/${correctLetter}.MP3`,
-        image: `images/abc/abakada/${word}.png`
-      };
-
-      // Update card image.
-      cardImg.src = currentQuestion.image;
-
-      // Build answer options.
-      let otherKeys = keys.filter(letter => letter !== correctLetter);
-      shuffleArray(otherKeys);
-      const wrongAnswers = otherKeys.slice(0, 3);
-      const options = [correctLetter, ...wrongAnswers];
-      shuffleArray(options);
-      letterBoxes.forEach((box, index) => {
-        box.querySelector('.letter').textContent = options[index];
-      });
-
-      // Automatically play the question sound.
+  // If autoplay is enabled, auto-play question sound.
+  if (autoplay) {
+    const qAudio = new Audio(currentQuestion.questionSound);
+    qAudio.play();
+    qAudio.addEventListener('ended', moveCard);
+  } else {
+    // Otherwise, wait for a click on the card to play question sound.
+    cardWrapper.style.pointerEvents = 'auto';
+    cardWrapper.addEventListener('click', function playQuestion() {
+      cardWrapper.removeEventListener('click', playQuestion);
       const qAudio = new Audio(currentQuestion.questionSound);
       qAudio.play();
       qAudio.addEventListener('ended', moveCard);
+    });
+  }
+}
+
+// Show the play again screen and play end-round music.
+function showPlayAgainScreen() {
+  cardWrapper.style.display = 'none';
+  interactionContainer.style.opacity = '0';
+  timerContainer.style.opacity = '0';
+  playAgainBtn.style.display = 'block';
+  playAgainMusic.currentTime = 0;
+  playAgainMusic.play();
+}
+
+// Slide the card to reveal the letter boxes and start the timer.
+function moveCard() {
+  cardWrapper.classList.add('moved');
+  cardWrapper.style.pointerEvents = 'none';
+  setTimeout(() => {
+    interactionContainer.style.opacity = '1';
+    startTimer();
+  }, 500);
+}
+
+// Start the letter-box countdown timer.
+function startTimer() {
+  timerContainer.style.opacity = '1';
+  backgroundMusic.currentTime = 0;
+  backgroundMusic.play();
+  timer = setInterval(() => {
+    angle -= step;
+    pie.style.setProperty('--angle', angle + 'deg');
+    if (angle <= 0) {
+      clearInterval(timer);
+      timerEnded = true;
+      backgroundMusic.pause();
+      disableInteractions();
+      checkAnswer();
     }
-    
-    // Show the play again screen
-    function showPlayAgainScreen() {
-      // Hide all game elements
-      cardWrapper.style.display = 'none';
-      interactionContainer.style.opacity = '0';
-      timerContainer.style.opacity = '0';
-      
-      // Show play again button
-      playAgainBtn.style.display = 'block';
+  }, interval);
+}
+
+// Disable letter box interactions.
+function disableInteractions() {
+  letterBoxes.forEach(box => {
+    box.style.pointerEvents = 'none';
+    box.classList.remove('inflated');
+  });
+}
+
+// Check the user's answer, mark boxes with color feedback, and play feedback sounds.
+async function checkAnswer() {
+  let userAnswer = null;
+  // Get the currently selected answer (if any)
+  letterBoxes.forEach(box => {
+    if (box.classList.contains('selected')) {
+      userAnswer = box.querySelector('.letter').textContent.trim();
     }
+  });
 
-    // Slide the card to reveal the letter boxes and start the timer.
-    function moveCard() {
-      cardWrapper.classList.add('moved');
-      // Disable further clicking.
-      cardWrapper.style.pointerEvents = 'none';
-      setTimeout(() => {
-        interactionContainer.style.opacity = '1';
-        startTimer();
-      }, 500);
+  // Reveal the correct answer (always green)
+  letterBoxes.forEach(box => {
+    if (box.querySelector('.letter').textContent.trim() === currentQuestion.correctLetter) {
+      box.style.backgroundColor = 'green';
     }
+  });
 
-    // Start the letter-box countdown timer.
-    function startTimer() {
-      timerContainer.style.opacity = '1';
-      
-      // Play background music when timer starts
-      backgroundMusic.currentTime = 0;
-      backgroundMusic.play();
-      
-      timer = setInterval(() => {
-        angle -= step;
-        pie.style.setProperty('--angle', angle + 'deg');
-        if (angle <= 0) {
-          clearInterval(timer);
-          timerEnded = true;
-          
-          // Stop background music when timer ends
-          backgroundMusic.pause();
-          
-          disableInteractions();
-          checkAnswer();
-        }
-      }, interval);
-    }
-
-    // Disable letter box interactions.
-    function disableInteractions() {
-      letterBoxes.forEach(box => {
-        box.style.pointerEvents = 'none';
-        box.classList.remove('inflated');
-      });
-    }
-
-    // Check the user's answer and play feedback sounds.
-    async function checkAnswer() {
-      let userAnswer = null;
-      letterBoxes.forEach(box => {
-        if (box.classList.contains('selected')) {
-          userAnswer = box.querySelector('.letter').textContent.trim();
-        }
-      });
-
-      if (userAnswer === currentQuestion.correctLetter) {
-        await playAudio('sounds/victory.mp3');
-      } else {
-        await playAudio('sounds/fail.mp3');
-      }
-
-      // Wait a few seconds before playing the answer sound.
-      await delay(1000);
-      await playAudio(currentQuestion.answerSound);
-      resetForNextQuestion();
-    }
-
-    // Reset for the next question.
-    function resetForNextQuestion() {
-      interactionContainer.style.opacity = '0';
-      timerContainer.style.opacity = '0';
-      angle = 360;
-      pie.style.setProperty('--angle', angle + 'deg');
-      letterBoxes.forEach(box => {
-        box.classList.remove('selected');
-        box.style.pointerEvents = 'auto';
-      });
-      cardWrapper.classList.remove('moved');
-      cardWrapper.style.pointerEvents = 'auto';
-      // Prepare next question after a short delay.
-      setTimeout(startQuestionAuto, 500);
-    }
-
-    // Letter box hover and click events.
+  // If a wrong answer was selected, mark that box red.
+  if (userAnswer && userAnswer !== currentQuestion.correctLetter) {
     letterBoxes.forEach(box => {
-      box.addEventListener('mouseover', () => {
-        if (!timerEnded) {
-          box.classList.add('inflated');
-        }
-      });
-      box.addEventListener('mouseout', () => {
-        box.classList.remove('inflated');
-      });
-      box.addEventListener('click', () => {
-        if (!timerEnded) {
-          letterBoxes.forEach(b => b.classList.remove('selected'));
-          box.classList.add('selected');
-        }
-      });
+      if (box.querySelector('.letter').textContent.trim() === userAnswer) {
+        box.style.backgroundColor = 'red';
+      }
     });
+  }
 
-    // Start the start-button animation on page load.
-    window.addEventListener('load', () => {
-      startButtonAnimation();
-      // When the start screen is clicked, show the countdown.
-      startScreen.addEventListener('click', showCountdown);
-      
-      // Add event listener for play again button
-      playAgainBtn.addEventListener('click', resetGame);
-    });
+  // Wait a bit so students see the revealed answer.
+  await delay(2000);
 
-    // Preload audio files
-    function preloadAudio(src) {
-      const audio = new Audio();
-      audio.src = src;
+  // If not in autoplay mode, play feedback sounds.
+  if (!autoplay) {
+    if (userAnswer === currentQuestion.correctLetter) {
+      await playAudio('sounds/victory.mp3');
+    } else {
+      await playAudio('sounds/fail.mp3');
     }
-    
-    preloadAudio('sounds/fail.mp3');
-    preloadAudio('sounds/beep.mp3');
-    preloadAudio('sounds/victory.mp3');
-    preloadAudio('sounds/fail.mp3');
+  }
+  await delay(1000);
+  await playAudio(currentQuestion.answerSound);
+  resetForNextQuestion();
+}
+
+// Reset for the next question.
+function resetForNextQuestion() {
+  interactionContainer.style.opacity = '0';
+  timerContainer.style.opacity = '0';
+  angle = 360;
+  pie.style.setProperty('--angle', angle + 'deg');
+  letterBoxes.forEach(box => {
+    box.classList.remove('selected');
+    box.style.pointerEvents = 'auto';
+    box.style.borderColor = "";
+  });
+  cardWrapper.classList.remove('moved');
+  cardWrapper.style.pointerEvents = 'auto';
+  setTimeout(startQuestionAuto, 500);
+}
+
+// Letter box hover and click events.
+letterBoxes.forEach(box => {
+  box.addEventListener('mouseover', () => {
+    if (!timerEnded) {
+      box.classList.add('inflated');
+    }
+  });
+  box.addEventListener('mouseout', () => {
+    box.classList.remove('inflated');
+  });
+  box.addEventListener('click', () => {
+    if (!timerEnded) {
+      // Allow switching selections during countdown.
+      letterBoxes.forEach(b => b.classList.remove('selected'));
+      box.classList.add('selected');
+      // Note: We no longer stop the timer or immediately call checkAnswer on click.
+    }
+  });
+});
+
+// Start the start-button animation on page load.
+window.addEventListener('load', () => {
+  startButtonAnimation();
+  startScreen.addEventListener('click', showCountdown);
+  playAgainBtn.addEventListener('click', resetGame);
+  
+  // Set initial values for settings inputs
+  numQuestionsInput.value = maxQuestions;
+  timerInput.value = timerDuration / 1000;
+});
+
+// Settings button event.
+settingsButton.addEventListener('click', () => {
+  console.log('Settings button clicked'); // Debug
+  // Update input values to reflect current settings
+  timerInput.value = timerDuration / 1000;
+  numQuestionsInput.value = maxQuestions;
+  settingsModal.style.display = 'block';
+});
+
+// Toggle autoplay switch.
+autoplaySwitch.addEventListener('click', () => {
+  autoplay = !autoplay;
+  autoplaySwitch.src = autoplay 
+    ? "images/utils/switch-on.png" 
+    : "images/utils/switch-off.png";
+});
+
+// Save settings.
+saveSettingsBtn.addEventListener('click', () => {
+  const seconds = parseInt(timerInput.value);
+  if (!isNaN(seconds) && seconds > 0) {
+    timerDuration = seconds * 1000;
+    step = (360 / timerDuration) * interval;
+  }
+  
+  const questions = parseInt(numQuestionsInput.value);
+  if (!isNaN(questions) && questions > 0) {
+    maxQuestions = questions;
+  }
+  
+  settingsModal.style.display = 'none';
+});
+
+// Preload audio files.
+function preloadAudio(src) {
+  const audio = new Audio();
+  audio.src = src;
+}
+
+preloadAudio('sounds/end-music.mp3');
+preloadAudio('sounds/fail.mp3');
+preloadAudio('sounds/beep.mp3');
+preloadAudio('sounds/victory.mp3');
+preloadAudio('sounds/go.mp3');
   </script>
 </body>
 </html>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cubao Elementary Kindergarten</title>
   <link rel="stylesheet" href="css/homestyle.css" />
+  <link rel="stylesheet" href="Shape.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
@@ -37,18 +38,23 @@
 
       <!-- SHAPES -->
 
-       <div class="card-wrapper">
-        <div class="shadow-card" style="background-color: coral;"></div>
-        <div class="card" style="border-color: brown;">
-          <div class="card-content"> 
-            <div class="card-image">
-              <img src="images/home-card-shapes.png" alt="Card Image">
-            </div>
-            <div class="card-title">Shape</div>
-          </div>
-          <div class="start-button" style="background-color: coral; color: brown;">Start</div>
+      <div class="card-wrapper">
+        <div class="shadow-card" style = "background-color:coral;"></div>
+        <div class="card" style = "border-color:coral;border-color:brown;">
+        <div class="card-content"> 
+          <div class="card-image">
+            <img src="images/home-card-shapes.png" alt="Card Image">
+          </div>  
+          <div class="card-title">Shapes</div>
         </div>
+        <body style="background-image: url('bg.png'); background-size: cover;">
+          <div class="start-button" style="background-color: coral; color: brown;" onclick="startGame()">Start</div>
+          
+          
       </div>
+    </div>
+
+     
 
       <!-- NUMBERS -->
 
@@ -116,5 +122,6 @@
   </div>
 
   <script src="scripts/homejs.js"></script>
+  <script src="Shape.js"></script>
 </body>
 </html>

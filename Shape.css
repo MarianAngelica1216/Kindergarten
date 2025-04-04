@@ -1,0 +1,273 @@
+  /* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: white;
+  margin: 0;
+}
+
+.game-container {
+  padding-top: 50px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Shapes Container */
+.shapes {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.shape {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 3px solid black;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-transform: capitalize;
+}
+.shape:hover {
+  transform: scale(1.2); /* Scale up on hover */
+  transition: transform 0.2s; /* Smooth transition */
+}
+/* Actual Shape Designs */
+
+/* Circle */
+.circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: rgb(32, 9, 240);
+}
+
+/* Square */
+.square {
+  width: 100px;
+  height: 100px;
+  background-color: lightgreen;
+  
+}
+
+/* Diamond (Rotated Square) */
+.diamond {
+  width: 100px; /* Width of the diamond */
+  height: 100px; /* Height of the diamond */
+  background-color: lightcoral; /* Background color */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* Diamond shape */
+}
+/* Rectangle */
+.rectangle {
+  width: 150px;
+  height: 75px;
+  background-color: lightyellow;
+}
+
+/* Pentagon */
+.pentagon {
+  width: 100px;
+  height: 100px;
+  background-color: lightpink;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+/* Triangle */
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 100px solid rgb(255, 238, 3);
+}
+
+/* Heptagon */
+.heptagon {
+  width: 100px;
+  height: 100px;
+  background-color: rgb(255, 140, 0);
+  clip-path: polygon(50% 0%, 86% 20%, 100% 58%, 75% 100%, 25% 100%, 0% 58%, 14% 20%);
+}
+
+/* Octagon */
+.octagon {
+  width: 100px;
+  height: 100px;
+  background-color: mediumpurple;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+/* OVAL */
+.OVAL {
+  width: 150px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: rgb(255, 0, 208);
+}
+
+
+/* Heart */
+.heart {
+  position: relative;
+  width: 100px;
+  height: 90px;
+  background-color: red;
+  clip-path: path("M50,15 C20,-30 -30,50 50,90 C130,50 80,-30 50,15 Z");
+}
+
+.shapes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns */
+  grid-template-rows: repeat(2, auto);  /* 2 rows */
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas#confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through */
+}
+.back-button {
+  width: 120px; /* Increase width */
+  height: 50px; /* Increase height */
+  font-size: 20px; /* Increase font size */
+  padding: 10px; /* Add padding for better spacing */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 10;
+  background-color: coral; /* Change to your desired color */
+  color: brown; /* Text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.back-button:hover {
+  background-color: darkorange; /* Darker shade on hover */
+}
+
+.task {
+  font-size: 36px; /* Increase font size */
+  font-weight: bold; /* Make it bold */
+  color: #333; /* Change color if needed */
+  margin-bottom: 20px; /* Add some space below the heading */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Optional: Add a shadow for better visibility */
+}
+
+#result {
+  font-size: 24px; /* Increase font size */
+  font-weight: bold; /* Make it bold */
+  margin-top: 20px; /* Add some space above the result */
+  transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+
+.sun {
+    position: absolute;
+    top: 20px; /* Adjust the vertical position */
+    left: -100px; /* Start off-screen */
+    width: 100px; /* Width of the sun */
+    height: 100px; /* Height of the sun */
+    background-color: yellow; /* Sun color */
+    border-radius: 50%; /* Make it circular */
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.5); /* Glow effect */
+    animation: moveSun 10s linear infinite; /* Animation */
+}
+
+@keyframes moveSun {
+    0% {
+        left: -100px; /* Start off-screen */
+    }
+    50% {
+        left: calc(100% - 100px); /* Move to the right */
+    }
+    100% {
+        left: -100px; /* Move back off-screen */
+    }
+}
+
+.sun {
+  position: absolute;
+  top: 20px; /* Adjust the vertical position */
+  left: -100px; /* Start off-screen */
+  width: 100px; /* Width of the sun */
+  height: 100px; /* Height of the sun */
+  background-color: yellow; /* Sun color */
+  border-radius: 50%; /* Make it circular */
+  box-shadow: 0 0 20px rgba(255, 255, 0, 0.5); /* Glow effect */
+  animation: moveSun 10s linear infinite; /* Animation */
+}
+
+@keyframes moveSun {
+  0% {
+      left: -100px; /* Start off-screen */
+  }
+  50% {
+      left: calc(100% - 100px); /* Move to the right */
+  }
+  100% {
+      left: -100px; /* Move back off-screen */
+  }
+}
+
+.sun::before {
+  content: '';
+  position: absolute;
+  top: 30px; /* Adjust for smiley eyes */
+  left: 20px; /* Adjust for smiley eyes */
+  width: 10px; /* Eye width */
+  height: 10px; /* Eye height */
+  background-color: black; /* Eye color */
+  border-radius: 50%; /* Make it circular */
+}
+
+.sun::after {
+  content: '';
+  position: absolute;
+  top: 30px; /* Adjust for smiley eyes */
+  left: 70px; /* Adjust for smiley eyes */
+  width: 10px; /* Eye width */
+  height: 10px; /* Eye height */
+  background-color: black; /* Eye color */
+  border-radius: 50%; /* Make it circular */
+}
+
+.sun .smile {
+  position: absolute;
+  top: 50px; /* Adjust for smile */
+  left: 20px; /* Center the smile */
+  width: 60px; /* Width of the smile */
+  height: 30px; /* Height of the smile */
+  border: 5px solid black; /* Smile color */
+  border-top-left-radius: 30px; /* Round the left side */
+  border-top-right-radius: 30px; /* Round the right side */
+  transform: rotate(0deg); /* Keep the smile upright */
+  background: transparent; /* Make the background transparent */
+  border-top: none; /* Remove the top border to create a smile */
+}
+
+.sun .smile {
+  position: absolute;
+  top: 50px; /* Adjust for smile */
+  left: 20px; /* Center the smile */
+  width: 60px; /* Width of the smile */
+  height: 30px; /* Height of the smile */
+  border: 5px solid black; /* Smile color */
+  border-top-left-radius: 30px; /* Round the left side */
+  border-top-right-radius: 30px; /* Round the right side */
+  transform: rotate(540deg); /* Keep the smile upright */
+  background: transparent; /* Make the background transparent */
+  border-top: none; /* Remove the top border to create a smile */
+}
