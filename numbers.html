@@ -60,7 +60,7 @@
 
       .clipboard {
         position: absolute;
-        left: 520px;
+        left: 540px;
         top: 130px;
         max-width: 450px;
         z-index: 5;
@@ -107,16 +107,21 @@
         width: 200px;
         height: 190px;
         background-color: white;
-        border: 4px solid;
+        border: 5px solid;
         border-radius: 30px;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 80px;
+        font-size:130px;
         font-weight: bold;
         color: black;
         transition: background-color 0.3s ease;
         cursor: pointer;
+        transition: transform 0.5s ease-out; 
+      }
+
+      .number-box:hover {
+        transform: scale(1.1);
       }
 
       /* Items Picture Container for apples */
@@ -193,6 +198,12 @@
         border-style: solid;
         border-color: white transparent transparent transparent;
       }
+
+      .purple{border-color:blueviolet; color: blueviolet;}
+      .pink{border-color:hotpink; color:hotpink;}
+      .blue{border-color: blue; color: navy;}
+      .orange{border-color: rgb(255, 145, 0); color:rgb(255, 145, 0);}
+      
     </style>
   </head>
   <body>
@@ -209,10 +220,10 @@
     <!-- Items Container (At the Top) for Number Boxes -->
     <div class="items-container">
       <div class="number-boxes" id="numberBoxes">
-        <div class="number-box"></div>
-        <div class="number-box"></div>
-        <div class="number-box"></div>
-        <div class="number-box"></div>
+        <div class="number-box purple"></div>
+        <div class="number-box orange"></div>
+        <div class="number-box blue"></div>
+        <div class="number-box pink"></div>
       </div>
     </div>
 
@@ -337,11 +348,14 @@
         
         // Reset UI elements
         boxes.forEach(box => {
-          box.style.backgroundColor = "white";
-          box.style.pointerEvents = "auto";
-          box.textContent = "";
-          delete box.dataset.correct;
-        });
+  box.style.backgroundColor = "white";
+  box.style.color = "";           // Remove inline font color to revert to CSS
+  box.style.borderColor = "";     // Remove inline border color to revert to CSS
+  box.style.pointerEvents = "auto";
+  box.textContent = "";
+  delete box.dataset.correct;
+});
+
         boxesContainer.style.opacity = 0;
         itemsContainer.querySelectorAll('img.fruit').forEach(img => img.remove());
         speechBubble.style.opacity = 0;
@@ -442,6 +456,8 @@
         const speechBubble = document.getElementById('speechBubble');
         if (this.dataset.correct === "true") {
           this.style.backgroundColor = "lightgreen";
+          this.style.borderColor = "darkgreen";
+          this.style.color = "darkgreen";
           const message = getRandomThankYou(currentFruit);
           typeText(speechBubble, message, () => {
             fadeOutElements(() => {
@@ -452,6 +468,8 @@
           });
         } else {
           this.style.backgroundColor = "red";
+this.style.color = "maroon";          // set font color to maroon
+this.style.borderColor = "maroon";     // set border color to maroon
           boxes.forEach(box => box.style.pointerEvents = "auto");
         }
       }
