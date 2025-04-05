@@ -1,1 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sound Object with Timer, Settings & Randomized Letter Boxes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      overflow: hidden;
+      font-family: fredoka, sans-serif;
+    }
+    body {
+      background-image: url('images/abc/abc-bg.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Fredoka", sans-serif;
+      font-weight: bold;
+    }
+    .back-button {
+      width: 90px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    /* Initially hide the card-wrapper */
+    .card-wrapper {
+      display: none;
+      position: absolute;
+      width: 350px;
+      height: 450px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.5s ease;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .card-wrapper.moved {
+      transform: translate(calc(-50% + 300px), -50%);
+    }
+    .card {
+      width: 100%;
+      height: 100%;
+      background-color: #fff3ea;
+      border: 7px solid cadetblue;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
+    }
+    .shadow-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: skyblue;
+      border-radius: 30px;
+      transform: rotate(10deg);
+      z-index: -1;
+    }
+    .sound-object {
+      max-width: 95%;
+      max-height: 95%;
+    }
+    .interaction-container {
+      position: absolute;
+      right: calc(50% + 30px);
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 1;
+    }
+    .letter-boxes {
+      left: 10px;
+      position: relative;
+      width: 490px;
+      height: 470px;
+      display: grid;
+      grid-template-columns: repeat(2, 250px);
+      grid-template-rows: repeat(2, 230px);
+      gap: 20px;
+    }
+    .letter-box {
+      width: 240px;
+      height: 220px;
+      background-color: white;
+      border: 7px solid;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: bold;
+      color: black;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .letter-box.inflated {
+      transform: scale(1.1);
+    }
+    .letter-box.selected {
+      background-color: skyblue;
+      color: rgb(73, 75, 158);
+      border-color: rgb(73, 75, 158);
+    }
+    .purple{border-color:blueviolet; color: blueviolet;}
+      .pink{border-color:hotpink; color:hotpink;}
+      .blue{border-color: blue; color: navy;}
+      .orange{border-color: rgb(255, 145, 0); color:rgb(255, 145, 0);}
+      
+    .timer-container {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 110px;
+      height: 110px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+    .background {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: white;
+    }
+    .pie {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: conic-gradient(red 0deg, red var(--angle, 360deg), transparent var(--angle, 360deg));
+    }
+    /* Start screen styling */
+    #startScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      z-index: 5;
+    }
+    #startScreen img {
+      width: 500px;
+      height: auto;
+    }
+    /* Countdown image size adjustment */
+    #countdownDisplay {
+      width: 150px;
+      height: 150px;
+    }
+    /* Settings button styling */
+    #settingsButton {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      width: 50px;
+      cursor: pointer;
+      z-index: 15;
+    }
+    /* Settings modal styling */
+    #settingsModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 20;
+    }
+    #settingsModal .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    #settingsModal h2 {
+      margin-top: 0;
+    }
+    #settingsModal input[type="number"] {
+      width: 50px;
+      padding: 5px;
+      margin: 10px;
+    }
+    #settingsModal button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
 
+  
+  <a href="javascript:history.back()" id="backButton">
+    <img src="images/back.png" alt="Back" class="back-button" />
+  </a>
+  
+  <!-- Settings Button -->
+  <img id="settingsButton" src="images/utils/settings.png" alt="Settings">
+  
+  <!-- Settings Modal -->
+  <div id="settingsModal">
+    <div class="modal-content">
+      <h2>Settings</h2>
+      <div style = "font-size:25px">
+        Autoplay:
+        <img id="autoplaySwitch" src="images/utils/switch-on.png" style="cursor:pointer; width:30px;">
+      </div>
+      <div style = "font-size:25px">
+        Timer (seconds):
+        <input type="number" id="timerInput" value="5" min="1" style = "font-size:15px;font-family:fredoka;">
+      </div>
+      <div>
+        Number of Questions
+        <input type="number" id="numQuestions" min="1" max="100" value="5">
+      </div>
+      <button id="saveSettings">Save</button>
+    </div>
+  </div>
+  
+  <!-- Start Screen with animated start button -->
+  <div id="startScreen">
+    <img id="startButtonImg" src="images/abc/start1.png" alt="Start Button">
+    <img id="countdownDisplay" style="display: none;" alt="Countdown">
+  </div>
+  
+  <!-- Play Again Button (initially hidden) -->
+  <div id="playAgain" style="display:none; position:absolute; top:50%; left:50%; transform: translate(-50%,-50%); z-index:10;">
+    <img src="images/playagain.png" alt="Play Again" style="width:300px; cursor:pointer;">
+  </div>
+
+  <div class="container">
+    <div class="items-container">
+      <!-- Interaction container -->
+      <div class="interaction-container" id="interactionContainer">
+        <div class="letter-boxes">
+          <div class="letter-box purple"><span class="letter"></span></div>
+          <div class="letter-box orange"><span class="letter"></span></div>
+          <div class="letter-box blue"><span class="letter"></span></div>
+          <div class="letter-box pink"><span class="letter"></span></div>
+          <div class="timer-container" id="timerContainer">
+            <div class="background"></div>
+            <div class="pie" id="pie"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card: now hidden initially -->
+      <div class="card-wrapper" id="cardWrapper">
+        <div class="shadow-card" style="background-color: coral;"></div>
+        <div class="card">
+          <img src="" alt="Sound Object" class="sound-object">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Answer key mapping letter to word.
+const answerKey = {
+  Aa: "aso",
+  Bb: "bola",
+  Cc: "cactus",
+  Dd: "damit",
+  Ee: "elepante",
+  Ff: "fries",
+  Gg: "guitara",
+  Hh: "hikaw",
+  Ii: "itlog",
+  Jj: "jeepney",
+  Kk: "kamay",
+  Ll: "langgam",
+  Mm: "mangga",
+  Nn: "nota",
+  Ññ: "santo-nino",
+  Nng: "ngiti",
+  Oo: "oso",
+  Pp: "pusa",
+  Qq: "quezon",
+  Rr: "regalo",
+  Ss: "sapatos",
+  Tt: "talong",
+  Uu: "ulan",
+  Vv: "venus",
+  Ww: "walis",
+  Xx: "xray",
+  Yy: "yoyo",
+  Zz: "zoo"
+};
+
+// Game settings (default values)
+let autoplay = true;
+let timerDuration = 5000; // in milliseconds
+let maxQuestions = 5; // Default number of questions
+
+// Calculate timer step based on timerDuration
+const interval = 50;
+let step = (360 / timerDuration) * interval;
+
+// DOM elements
+const cardWrapper = document.getElementById('cardWrapper');
+const interactionContainer = document.getElementById('interactionContainer');
+const timerContainer = document.getElementById('timerContainer');
+const pie = document.getElementById('pie');
+const letterBoxes = document.querySelectorAll('.letter-box');
+const cardImg = document.querySelector('.sound-object');
+const startScreen = document.getElementById('startScreen');
+const startButtonImg = document.getElementById('startButtonImg');
+const countdownDisplay = document.getElementById('countdownDisplay');
+const playAgainBtn = document.getElementById('playAgain');
+const settingsButton = document.getElementById('settingsButton');
+const settingsModal = document.getElementById('settingsModal');
+const autoplaySwitch = document.getElementById('autoplaySwitch');
+const timerInput = document.getElementById('timerInput');
+const numQuestionsInput = document.getElementById('numQuestions');
+const saveSettingsBtn = document.getElementById('saveSettings');
+
+// Audio elements
+const backgroundMusic = new Audio('sounds/gamemusic.mp3');
+const beepSound = new Audio('sounds/beep.mp3');
+const playAgainMusic = new Audio('sounds/end-music.mp3');
+
+// Timer variables.
+let timerEnded = false;
+let angle = 360;
+let timer;
+
+// Global question object.
+let currentQuestion = null;
+// Track used questions
+let usedQuestions = [];
+// Track question count
+let questionCount = 0;
+
+// Start button animation variables.
+const startImages = [
+  'images/abc/start1.png',
+  'images/abc/start2.png',
+  'images/abc/start3.png',
+];
+let startFrame = 0;
+let startAnimInterval;
+
+// Countdown images.
+const countdownImages = [
+  'images/abc/countdown3.png',
+  'images/abc/countdown2.png',
+  'images/abc/countdown1.png',
+  'images/abc/go.png'
+];
+
+// Utility: play audio and return a promise.
+function playAudio(src) {
+  return new Promise(resolve => {
+    const audio = new Audio(src);
+    audio.play();
+    audio.addEventListener('ended', () => resolve());
+  });
+}
+
+// Utility: delay for given milliseconds.
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Utility: shuffle an array.
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// Animate the start button images in a loop.
+function startButtonAnimation() {
+  startAnimInterval = setInterval(() => {
+    startFrame = (startFrame + 1) % startImages.length;
+    startButtonImg.src = startImages[startFrame];
+  }, 300);
+}
+
+// Reset the game state for a new game.
+function resetGame() {
+  usedQuestions = [];
+  questionCount = 0;
+  
+  // Hide play again button
+  playAgainBtn.style.display = 'none';
+  
+  // Show start screen
+  startScreen.style.display = 'block';
+  startButtonImg.style.display = 'block';
+  countdownDisplay.style.display = 'none';
+  
+  // Restart the button animation
+  startButtonAnimation();
+}
+
+// Show the countdown (using countdown images) then call the question auto-start.
+async function showCountdown() {
+  clearInterval(startAnimInterval);
+  startButtonImg.style.display = 'none';
+  countdownDisplay.style.display = 'block';
+  countdownDisplay.style.width = '150px';
+  for (let i = 0; i < countdownImages.length; i++) {
+    countdownDisplay.src = countdownImages[i];
+    if (i < countdownImages.length - 1) {
+      beepSound.currentTime = 0;
+      beepSound.play();
+    } else {
+      const goSound = new Audio('sounds/go.mp3');
+      goSound.play();
+    }
+    await delay(1200);
+  }
+  startScreen.style.display = 'none';
+  cardWrapper.style.display = 'block';
+  startQuestionAuto();
+}
+
+// Set up a new question and auto-play the question sound (or wait for user click if autoplay is off).
+async function startQuestionAuto() {
+  if (questionCount >= maxQuestions) {
+    showPlayAgainScreen();
+    return;
+  }
+  
+  interactionContainer.style.opacity = '0';
+  timerContainer.style.opacity = '0';
+  angle = 360;
+  pie.style.setProperty('--angle', angle + 'deg');
+  timerEnded = false;
+  cardWrapper.classList.remove('moved');
+  cardWrapper.style.pointerEvents = 'none';
+  letterBoxes.forEach(box => {
+    box.classList.remove('selected');
+    box.style.pointerEvents = 'auto';
+    // Reset border color (if previously changed)
+    box.style.backgroundColor = "";
+  });
+  
+  const keys = Object.keys(answerKey);
+  let availableKeys = keys.filter(key => !usedQuestions.includes(key));
+  if (availableKeys.length === 0) {
+    usedQuestions = [];
+    availableKeys = [...keys];
+  }
+  const randomIndex = Math.floor(Math.random() * availableKeys.length);
+  const correctLetter = availableKeys[randomIndex];
+  const word = answerKey[correctLetter];
+  usedQuestions.push(correctLetter);
+  questionCount++;
+
+  currentQuestion = {
+    correctLetter: correctLetter,
+    questionSound: `sounds/abakada/${word}.MP3`,
+    answerSound: `sounds/abakada/${correctLetter}.MP3`,
+    image: `images/abc/abakada/${word}.png`
+  };
+
+  cardImg.src = currentQuestion.image;
+
+  // Build answer options.
+  let otherKeys = keys.filter(letter => letter !== correctLetter);
+  shuffleArray(otherKeys);
+  const wrongAnswers = otherKeys.slice(0, 3);
+  const options = [correctLetter, ...wrongAnswers];
+  shuffleArray(options);
+  letterBoxes.forEach((box, index) => {
+    box.querySelector('.letter').textContent = options[index];
+    // Reset border color in case of previous feedback
+    box.style.borderColor = "";
+  });
+
+  // If autoplay is enabled, auto-play question sound.
+  if (autoplay) {
+    const qAudio = new Audio(currentQuestion.questionSound);
+    qAudio.play();
+    qAudio.addEventListener('ended', moveCard);
+  } else {
+    // Otherwise, wait for a click on the card to play question sound.
+    cardWrapper.style.pointerEvents = 'auto';
+    cardWrapper.addEventListener('click', function playQuestion() {
+      cardWrapper.removeEventListener('click', playQuestion);
+      const qAudio = new Audio(currentQuestion.questionSound);
+      qAudio.play();
+      qAudio.addEventListener('ended', moveCard);
+    });
+  }
+}
+
+// Show the play again screen and play end-round music.
+function showPlayAgainScreen() {
+  cardWrapper.style.display = 'none';
+  interactionContainer.style.opacity = '0';
+  timerContainer.style.opacity = '0';
+  playAgainBtn.style.display = 'block';
+  playAgainMusic.currentTime = 0;
+  playAgainMusic.play();
+}
+
+// Slide the card to reveal the letter boxes and start the timer.
+function moveCard() {
+  cardWrapper.classList.add('moved');
+  cardWrapper.style.pointerEvents = 'none';
+  setTimeout(() => {
+    interactionContainer.style.opacity = '1';
+    startTimer();
+  }, 500);
+}
+
+// Start the letter-box countdown timer.
+function startTimer() {
+  timerContainer.style.opacity = '1';
+  backgroundMusic.currentTime = 0;
+  backgroundMusic.play();
+  timer = setInterval(() => {
+    angle -= step;
+    pie.style.setProperty('--angle', angle + 'deg');
+    if (angle <= 0) {
+      clearInterval(timer);
+      timerEnded = true;
+      backgroundMusic.pause();
+      disableInteractions();
+      checkAnswer();
+    }
+  }, interval);
+}
+
+// Disable letter box interactions.
+function disableInteractions() {
+  letterBoxes.forEach(box => {
+    box.style.pointerEvents = 'none';
+    box.classList.remove('inflated');
+  });
+}
+
+// Check the user's answer, mark boxes with color feedback, and play feedback sounds.
+async function checkAnswer() {
+  let userAnswer = null;
+  // Get the currently selected answer (if any)
+  letterBoxes.forEach(box => {
+    if (box.classList.contains('selected')) {
+      userAnswer = box.querySelector('.letter').textContent.trim();
+    }
+  });
+
+  // Reveal the correct answer (always green)
+  letterBoxes.forEach(box => {
+    if (box.querySelector('.letter').textContent.trim() === currentQuestion.correctLetter) {
+      box.style.backgroundColor = 'lightgreen';
+      box.style.color = 'darkgreen';
+      box.style.borderColor = 'darkgreen';
+
+    }
+  });
+
+  // If a wrong answer was selected, mark that box red.
+  if (userAnswer && userAnswer !== currentQuestion.correctLetter) {
+    letterBoxes.forEach(box => {
+      if (box.querySelector('.letter').textContent.trim() === userAnswer) {
+        box.style.backgroundColor = 'red';
+        box.style.color = 'maroon';
+        box.style.borderColor = 'maroon';
+
+      }
+    });
+  }
+
+  // Wait a bit so students see the revealed answer.
+  await delay(2000);
+
+  // If not in autoplay mode, play feedback sounds.
+  if (!autoplay) {
+    if (userAnswer === currentQuestion.correctLetter) {
+      await playAudio('sounds/victory.mp3');
+    } else {
+      await playAudio('sounds/fail.mp3');
+    }
+  }
+  await delay(1000);
+  await playAudio(currentQuestion.answerSound);
+  resetForNextQuestion();
+}
+
+// Reset for the next question.
+function resetForNextQuestion() {
+  interactionContainer.style.opacity = '0';
+  timerContainer.style.opacity = '0';
+  angle = 360;
+  pie.style.setProperty('--angle', angle + 'deg');
+  letterBoxes.forEach(box => {
+    box.classList.remove('selected');
+    box.style.pointerEvents = 'auto';
+    box.style.borderColor = "";
+    box.style.color = "";
+    box.style.backgroundColor = "";
+  });
+  cardWrapper.classList.remove('moved');
+  cardWrapper.style.pointerEvents = 'auto';
+  setTimeout(startQuestionAuto, 500);
+}
+
+// Letter box hover and click events.
+letterBoxes.forEach(box => {
+  box.addEventListener('mouseover', () => {
+    if (!timerEnded) {
+      box.classList.add('inflated');
+    }
+  });
+  box.addEventListener('mouseout', () => {
+    box.classList.remove('inflated');
+  });
+  box.addEventListener('click', () => {
+    if (!timerEnded) {
+      // Allow switching selections during countdown.
+      letterBoxes.forEach(b => b.classList.remove('selected'));
+      box.classList.add('selected');
+      // Note: We no longer stop the timer or immediately call checkAnswer on click.
+    }
+  });
+});
+
+// Start the start-button animation on page load.
+window.addEventListener('load', () => {
+  startButtonAnimation();
+  startScreen.addEventListener('click', showCountdown);
+  playAgainBtn.addEventListener('click', resetGame);
+  
+  // Set initial values for settings inputs
+  numQuestionsInput.value = maxQuestions;
+  timerInput.value = timerDuration / 1000;
+});
+
+// Settings button event.
+settingsButton.addEventListener('click', () => {
+  console.log('Settings button clicked'); // Debug
+  // Update input values to reflect current settings
+  timerInput.value = timerDuration / 1000;
+  numQuestionsInput.value = maxQuestions;
+  settingsModal.style.display = 'block';
+});
+
+// Toggle autoplay switch.
+autoplaySwitch.addEventListener('click', () => {
+  autoplay = !autoplay;
+  autoplaySwitch.src = autoplay 
+    ? "images/utils/switch-on.png" 
+    : "images/utils/switch-off.png";
+});
+
+// Save settings.
+saveSettingsBtn.addEventListener('click', () => {
+  const seconds = parseInt(timerInput.value);
+  if (!isNaN(seconds) && seconds > 0) {
+    timerDuration = seconds * 1000;
+    step = (360 / timerDuration) * interval;
+  }
+  
+  const questions = parseInt(numQuestionsInput.value);
+  if (!isNaN(questions) && questions > 0) {
+    maxQuestions = questions;
+  }
+  
+  settingsModal.style.display = 'none';
+});
+
+// Preload audio files.
+function preloadAudio(src) {
+  const audio = new Audio();
+  audio.src = src;
+}
+
+preloadAudio('sounds/end-music.mp3');
+preloadAudio('sounds/fail.mp3');
+preloadAudio('sounds/beep.mp3');
+preloadAudio('sounds/victory.mp3');
+preloadAudio('sounds/go.mp3');
+  </script>
+</body>
+</html>
