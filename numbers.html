@@ -585,7 +585,7 @@ function onBoxClick() {
     this.style.color = "white";
     this.classList.add('shake');
     setTimeout(() => this.classList.remove('shake'), 500);
-    new Audio('sounds/wrongbeep.mp3').play();
+    new Audio('sounds/wrong.mp3').play();
     
     // Re-enable boxes for retry
     boxes.forEach(box => {
@@ -597,14 +597,15 @@ function onBoxClick() {
   }
   
   // Correct answer handling
-  new Audio('sounds/ding.mp3').play();
-  if (this.textContent) {
+  new Audio('sounds/correct.mp3').play();
+  /*if (this.textContent) {
     try {
       new Audio(`sounds/${this.textContent}.mp3`).play();
     } catch(e) {
       console.log("Audio file not found for number:", this.textContent);
     }
   }
+  */
   
   currentQuestion++;
   

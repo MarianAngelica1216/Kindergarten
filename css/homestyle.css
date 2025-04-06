@@ -1,7 +1,4 @@
 /* Basic reset and body styling */
-html{
-  zoom: 95%;
-}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -45,6 +42,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  top: -50px;
 }
 
 .carousel-container {
@@ -70,6 +68,9 @@ body {
   font-size:20px;
   z-index: 10; /* Keeps buttons on top */
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  top: -50px;
+  position: relative;  /* ← enable top/left/right/bottom */
+
 }
 
 .nav-btn:hover {
