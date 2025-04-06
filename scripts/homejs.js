@@ -11,7 +11,6 @@ function startGame(targetPage) {
   window.location.href = targetPage;
 }
 
-
 function updateCarousel() {
   cardWrappers.forEach((cardWrapper, i) => {
     let offset = i - currentIndex;
@@ -53,11 +52,19 @@ function updateCarousel() {
   });
 }
 
-// Add click event listener to each card wrapper
+// Only allow clicking in-focus and near-focus cards
 cardWrappers.forEach((cardWrapper, i) => {
   cardWrapper.addEventListener('click', () => {
-    currentIndex = i;
-    updateCarousel();
+    if (cardWrapper.classList.contains('in-focus')) {
+      // Main action when the center card is clicked
+      console.log('In-focus card clicked');
+      // startGame('yourTargetPage.html');
+    } else if (cardWrapper.classList.contains('near-focus')) {
+      // Move carousel to this card
+      currentIndex = i;
+      updateCarousel();
+    }
+    // Do nothing if out-of-focus
   });
 });
 
@@ -71,29 +78,16 @@ function goPrev() {
   updateCarousel();
 }
 
-function goToCard(index) {
-  currentIndex = index;
-  updateCarousel();
-}
-
 nextBtn.addEventListener('click', goNext);
 prevBtn.addEventListener('click', goPrev);
-
-cardWrappers.forEach((cardWrapper, i) => {
-  cardWrapper.addEventListener('click', () => {
-    goToCard(i);
-  });
-});
 
 // Add mouse wheel event listener to the carousel container
 carousel.addEventListener('wheel', (event) => {
   event.preventDefault(); // Prevent default scrolling behavior
 
   if (event.deltaY > 0) {
-    // Scrolling down
     goNext();
   } else if (event.deltaY < 0) {
-    // Scrolling up
     goPrev();
   }
 });
