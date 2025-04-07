@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Counting Market</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
     <style>
       body {
@@ -16,7 +17,7 @@
         font-family: fredoka;
       }
 
-      /* Splash Screen Styles */
+      /* Splash & Victory Screens */
       #splashScreen, #victoryScreen {
         position: fixed;
         top: 0;
@@ -35,15 +36,37 @@
         cursor: pointer;
         font-weight: normal;
       }
-      #splashScreen img, #victoryScreen img {
+      /* Victory screen now includes confetti and a restart button */
+      #victoryScreen {
+        display: none;
+      }
+      #victoryScreen .confetti {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("images/utils/confetti.gif") no-repeat center top;
+        background-size: cover;
+        z-index: 50;
+      }
+      #victoryScreen .content {
+        position: relative;
+        z-index: 100;
+      }
+      #victoryScreen img {
         max-width: 80%;
         height: auto;
         margin-bottom: 20px;
       }
-      #victoryScreen { display: none; }
+      #victoryScreen button {
+        font-size: 24px;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
 
-      .black{
-        width:100%;
+      .black {
+        width: 100%;
         height: 100%;
         z-index: 1;
         background-color: rgba(255, 255, 255, 0.2); 
@@ -52,9 +75,9 @@
       }
 
       .clip-board {
-        position:absolute;
-        left:320px;
-        top:130px;
+        position: absolute;
+        left: 320px;
+        top: 130px;
         max-width: 660px;
         z-index: 2;
       }
@@ -68,7 +91,7 @@
         transform: translateY(100vh); /* Start offscreen at the bottom */
       }
 
-      .back-button, .settings-button {
+      .back-button {
         position: absolute;
         top: 20px;
         width: 90px;
@@ -76,6 +99,8 @@
         cursor: pointer;
         z-index: 150;
       }
+
+      
       .back-button { left: 20px; }
       .settings-button { right: 20px; }
       
@@ -114,7 +139,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size:130px;
+        font-size: 130px;
         font-weight: bold;
         color: black;
         transition: background-color 0.3s ease;
@@ -137,7 +162,7 @@
       }
       .shake { animation: shake 0.5s; }
 
-      /* Items Picture Container for apples */
+      /* Items Picture Container for Apples */
       .items-picture-container {
         position: absolute; 
         top: 50%; 
@@ -213,34 +238,80 @@
       }
 
       /* Settings Modal */
-      .settings-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 300;
-        align-items: center;
-        justify-content: center;
-      }
-      .settings-content {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: left;
-        font-family: 'Poppins', sans-serif;
-      }
-      .settings-content h2 { margin-top: 0; }
-      .settings-content label { display: block; margin: 10px 0; }
-      .settings-content input[type="number"] { width: 60px; }
+.settings-button {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  width: 50px;
+  cursor: pointer;
+  z-index: 150;
+}
 
-      .purple{border-color:blueviolet; color: blueviolet;}
-      .pink{border-color:hotpink; color:hotpink;}
-      .blue{border-color: blue; color: navy;}
-      .orange{border-color: rgb(255, 145, 0); color:rgb(255, 145, 0);}
+.settings-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 300;
+  font-family: "Fredoka", sans-serif;
+}
+
+.settings-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: left;
+  font-weight: normal;
+  width: 400px;
+}
+
+.settings-content h2 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 24px;
+}
+
+.settings-content label {
+  display: block;
+  margin: 10px 0;
+  font-size: 20px;
+}
+
+.settings-content input[type="number"],
+.settings-content input[type="range"],
+.settings-content input[type="checkbox"] {
+  margin: 10px;
+}
+
+.settings-content button {
+  display: block;
+  margin: 15px auto 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: skyblue;
+  border: none;
+  border-radius: 5px;
+  color: #333;
+  font-family: "Fredoka", sans-serif;
+  font-weight: bold;
+}
+
+.settings-content button:hover {
+  background-color: orange;
+}
       
+      .purple { border-color: blueviolet; color: blueviolet; }
+      .pink { border-color: hotpink; color: hotpink; }
+      .blue { border-color: blue; color: navy; }
+      .orange { border-color: rgb(255, 145, 0); color: rgb(255, 145, 0); }
     </style>
   </head>
   <body>
@@ -252,13 +323,16 @@
     <!-- Splash Screen -->
     <div id="splashScreen">
       <img src="videos/numbers.gif" alt="Farm Animation" style="width: 400px;" />
-      <div>click anywhere to start</div>
+      <div>Click anywhere to start</div>
     </div>
     
-    <!-- Victory Screen -->
+    <!-- Victory Screen with Confetti and Restart -->
     <div id="victoryScreen">
-      <img src="images/victory.png" alt="Victory">
-      <div>click to restart</div>
+      <div class="confetti"></div>
+      <div class="content">
+        <img src="images/victory.png" alt="Victory">
+        <button id="restartButton">Restart</button>
+      </div>
     </div>
 
     <!-- Items Container (At the Top) for Number Boxes -->
@@ -291,76 +365,50 @@
     <div class="settings-modal" id="settingsModal">
       <div class="settings-content">
         <h2>Settings</h2>
-        <label>Number of questions: <input type="number" id="questionsInput" min="1" value="5"></label>
-        <label><input type="checkbox" id="endlessCheckbox"> Endless Mode</label>
+        <label>
+          Number of Questions: 
+          <input type="number" id="questionsInput" min="1" value="5">
+        </label>
+        <label>
+          <input type="checkbox" id="endlessCheckbox"> Endless Mode
+        </label>
+        <label>
+          Music Volume:
+          <input type="range" id="musicVolume" min="0" max="1" step="0.01" value="0.5">
+        </label>
+        <label>
+          Sound Effects Volume:
+          <input type="range" id="sfxVolume" min="0" max="1" step="0.01" value="1">
+        </label>
         <button id="saveSettings">Save</button>
       </div>
     </div>
     
     <div class="black"></div>
     <audio id="bgMusic" loop>
-        <source src="sounds/bg-music1.mp3" type="audio/mpeg">
+      <source src="sounds/bg-music1.mp3" type="audio/mpeg">
     </audio>
+    
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-  const splashScreen = document.getElementById("splashScreen");
-  const victoryScreen = document.getElementById("victoryScreen");
-  const bgMusic = document.getElementById("bgMusic");
-  const settingsButton = document.getElementById("settingsButton");
-  const settingsModal = document.getElementById("settingsModal");
-  const saveSettings = document.getElementById("saveSettings");
-  const questionsInput = document.getElementById("questionsInput");
-  const endlessCheckbox = document.getElementById("endlessCheckbox");
-
-  // Splash start
-  splashScreen.addEventListener("click", function() {
-    splashScreen.style.display = "none";
-    bgMusic.volume = 0.5;
-    bgMusic.play();
-    startGame();
-  });
-  
-  // Victory restart
-  victoryScreen.addEventListener("click", function() {
-    victoryScreen.style.display = "none";
-    startGame();
-  });
-  
-  // Settings modal
-  settingsButton.addEventListener("click", () => {
-    questionsInput.value = totalQuestions;
-    endlessCheckbox.checked = endlessMode;
-    questionsInput.disabled = endlessCheckbox.checked;
-    settingsModal.style.display = "flex";
-  });
-  
-  endlessCheckbox.addEventListener("change", () => {
-    questionsInput.disabled = endlessCheckbox.checked;
-  });
-  
-  saveSettings.addEventListener("click", () => {
-    totalQuestions = parseInt(questionsInput.value) || 5;
-    endlessMode = endlessCheckbox.checked;
-    settingsModal.style.display = "none";
-  });
-});
-
-// ==== CONFIGURABLE OPTIONS ====
-const typingDelay = 30;         // Faster typing (was 50)
-const afterTypingPause = 500;   // Pause after typing before next step (ms)
-const customerSlideDuration = 1000;  // Time for customer to slide in/out (ms)
-const fadeDuration = 1000;      // Duration for fading in/out elements (ms)
-const delayBeforeTyping = 500;  // Delay before typing after customer appears (increased from 300)
-const delayBeforeFruit = 400;   // Delay after typing before fruit shows (ms)
-const delayBeforeNumbers = 600; // Delay after fruit appears before number boxes
-const delayBeforeNextCustomer = 1500; // Time to wait before new customer starts
-const clipboardSlideDuration = 500;   // Duration for clipboard slide animation (ms)
-// ===============================
-
+      // Global settings
 let endlessMode = false;
 let totalQuestions = 5;
 let currentQuestion = 0;
 let currentFruit = "apples";
+let musicVolume = 0.5;
+let sfxVolume = 1;
+let answerRevealed = false;
+
+// Timing constants
+const typingDelay = 30;
+const afterTypingPause = 500;
+const customerSlideDuration = 1000;
+const fadeDuration = 1000;
+const delayBeforeTyping = 500;
+const delayBeforeFruit = 400;
+const delayBeforeNumbers = 600;
+const delayBeforeNextCustomer = 1500;
+const clipboardSlideDuration = 500;
 
 const speechTemplates = [
   "I think I want some _.",
@@ -377,7 +425,7 @@ const speechTemplates = [
   "I think _ would be perfect for today!"
 ];
 
-const fruits = ["apples", "bananas", "oranges", "grapes", "strawberries"];
+const fruits = ["apples", "oranges", "grapes", "strawberries", "mangos"];
 const thankYouMessages = [
   "Thank you!",
   "This will keep me full!",
@@ -407,7 +455,7 @@ function getRandomThankYou(fruit) {
 }
 
 function typeText(element, text, callback) {
-  element.textContent = ""; // Clear text BEFORE fade-in
+  element.textContent = "";
   let index = 0;
   const interval = setInterval(() => {
     element.textContent += text[index];
@@ -419,15 +467,15 @@ function typeText(element, text, callback) {
   }, typingDelay);
 }
 
-// Slide clipboard up concurrently (does not block other animations)
 function slideUpClipboard() {
   const clipboard = document.getElementById('clipboard');
   clipboard.style.transition = `transform ${clipboardSlideDuration}ms ease-out`;
-  clipboard.style.transform = "translateY(0)";  // Slide into view
+  clipboard.style.transform = "translateY(0)";
 }
 
 function startGame() {
   currentQuestion = 0;
+  answerRevealed = false;
   resetUI();
   nextCustomer();
 }
@@ -440,11 +488,10 @@ function resetUI() {
   const customerImg = document.getElementById('customer');
   const clipboardImg = document.getElementById('clipboard');
   
-  // Reset UI elements
   boxes.forEach(box => {
     box.style.backgroundColor = "white";
-    box.style.color = "";           // Remove inline font color to revert to CSS
-    box.style.borderColor = "";     // Remove inline border color to revert to CSS
+    box.style.borderColor = "";
+    box.style.color = ""; // Reset text color
     box.style.pointerEvents = "auto";
     box.textContent = "";
     delete box.dataset.correct;
@@ -455,57 +502,56 @@ function resetUI() {
   itemsContainer.innerHTML = '';
   speechBubble.style.opacity = 0;
   speechBubble.textContent = "";
-  
-  // Reset customer position (offscreen right)
   customerImg.style.transition = `transform ${customerSlideDuration}ms ease-out`;
   customerImg.style.transform = "translateX(100vw)";
-  
-  // Reset clipboard position (offscreen bottom)
   clipboardImg.style.transition = `none`;
   clipboardImg.style.transform = "translateY(100vh)";
+  answerRevealed = false;
 }
 
 function nextCustomer() {
-  // Reset UI for new customer
+  // Reset answer revealed state at the beginning of each question
+  answerRevealed = false;
+  
   const speechBubble = document.getElementById('speechBubble');
   const boxesContainer = document.getElementById('numberBoxes');
   const boxes = document.querySelectorAll('.number-box');
   const itemsContainer = document.getElementById('itemsContainer');
   const customerImg = document.getElementById('customer');
   
-  // Clear the previous state
   speechBubble.style.opacity = 0;
   speechBubble.textContent = "";
   boxesContainer.style.opacity = 0;
   itemsContainer.innerHTML = '';
   
-  // Reset all number boxes
-  boxes.forEach(box => {
+  // Completely reset each box to its original state
+  boxes.forEach((box, index) => {
+    // First, restore the original class-based colors
+    const originalClasses = ['purple', 'orange', 'blue', 'pink'];
+    box.className = 'number-box ' + originalClasses[index];
+    
+    // Then reset all inline styles to ensure they don't override the class styles
     box.style.backgroundColor = "white";
-    box.style.color = "";
     box.style.borderColor = "";
+    box.style.color = "";
     box.style.pointerEvents = "auto";
     box.textContent = "";
     delete box.dataset.correct;
     box.classList.remove('shake');
+    // Clear any previous click handlers
+    box.onclick = null;
   });
   
-  // Load new customer image
   const randomCustomer = Math.floor(Math.random() * 8) + 1;
   customerImg.src = "images/numbers/customers/" + randomCustomer + ".png";
   
-  // Slide customer into view
   setTimeout(() => {
     customerImg.style.transform = "translateX(0)";
-    
-    // Wait for customer to be in position before typing speech
     setTimeout(() => {
       const { text, fruit } = getRandomSpeechAndFruit();
       currentFruit = fruit;
       speechBubble.style.opacity = 1;
-      
       typeText(speechBubble, text, () => {
-        // Start clipboard slide-up concurrently with items fade in
         slideUpClipboard();
         const itemCount = fadeInItems(currentFruit);
         setTimeout(() => {
@@ -551,79 +597,78 @@ function fadeInItems(fruit) {
 function setupNumberBoxes(correctCount) {
   const boxes = document.querySelectorAll('.number-box');
   let uniqueNumbers = new Set();
-
-  // Ensure the correct count is included in the unique numbers
   uniqueNumbers.add(correctCount);
-
-  // Generate random unique numbers for the remaining boxes
   while (uniqueNumbers.size < boxes.length) {
-    let num = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
-    uniqueNumbers.add(num); // Set will automatically ensure uniqueness
+    let num = Math.floor(Math.random() * 10) + 1;
+    uniqueNumbers.add(num);
   }
-
-  // Convert Set to an array and shuffle it
   uniqueNumbers = Array.from(uniqueNumbers).sort(() => Math.random() - 0.5);
-
-  // Assign numbers to boxes
+  
   boxes.forEach((box, index) => {
     const num = uniqueNumbers[index];
     box.textContent = num;
-    box.dataset.correct = (num === correctCount) ? "true" : "false"; // Mark the correct box
-    box.onclick = onBoxClick; // Add click handler to the boxes
+    if (num === correctCount) {
+      box.dataset.correct = "true";
+    } else {
+      box.dataset.correct = "false";
+    }
+    // Enable clicking for manual answer selection
+    box.onclick = onBoxClick;
   });
 }
 
 function onBoxClick() {
-  const boxes = document.querySelectorAll('.number-box');
-  boxes.forEach(box => box.style.pointerEvents = "none");
-  const speechBubble = document.getElementById('speechBubble');
+  if (answerRevealed) return; // Ignore if already answered
   
   const isCorrect = this.dataset.correct === "true";
+  
   if (!isCorrect) {
-    // Wrong answer - turn red and shake
     this.style.backgroundColor = "red";
     this.style.color = "white";
     this.classList.add('shake');
     setTimeout(() => this.classList.remove('shake'), 500);
-    new Audio('sounds/wrong.mp3').play();
+    let wrongAudio = new Audio('sounds/wrong.mp3');
+    wrongAudio.volume = sfxVolume;
+    wrongAudio.play();
     
-    // Re-enable boxes for retry
-    boxes.forEach(box => {
-      if (box !== this) { // Only re-enable other boxes
-        box.style.pointerEvents = "auto";
-      }
-    });
+    // Only disable this box, keep others clickable
+    this.style.pointerEvents = "none";
     return;
   }
   
-  // Correct answer handling
-  new Audio('sounds/correct.mp3').play();
-  /*if (this.textContent) {
-    try {
-      new Audio(`sounds/${this.textContent}.mp3`).play();
-    } catch(e) {
-      console.log("Audio file not found for number:", this.textContent);
-    }
-  }
-  */
+  // If correct answer
+  answerRevealed = true;
   
-  currentQuestion++;
+  // Disable all boxes
+  const boxes = document.querySelectorAll('.number-box');
+  boxes.forEach(box => {
+    box.style.pointerEvents = "none";
+  });
   
+  let correctAudio = new Audio('sounds/correct.mp3');
+  correctAudio.volume = sfxVolume;
+  correctAudio.play();
   this.style.backgroundColor = "lightgreen";
   this.style.borderColor = "darkgreen";
   this.style.color = "darkgreen";
   
+  const speechBubble = document.getElementById('speechBubble');
   const message = getRandomThankYou(currentFruit);
   typeText(speechBubble, message, () => {
     fadeOutElements(() => {
       const customerImg = document.getElementById('customer');
       customerImg.style.transform = "translateX(100vw)";
-      
-      if (!endlessMode && currentQuestion >= totalQuestions) {
+      if (!endlessMode && currentQuestion >= totalQuestions - 1) {  // Account for 0-indexing
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.pause();
+        let endAudio = new Audio('sounds/end-music.mp3');
+        endAudio.volume = musicVolume;
+        endAudio.play();
         setTimeout(() => {
           document.getElementById('victoryScreen').style.display = 'flex';
         }, delayBeforeNextCustomer);
       } else {
+        currentQuestion++;
         setTimeout(nextCustomer, delayBeforeNextCustomer);
       }
     });
@@ -639,12 +684,66 @@ function fadeOutElements(callback) {
     img.style.transition = `opacity ${fadeDuration}ms`;
     img.style.opacity = 0;
   });
-  // Slide the clipboard off (downwards) concurrently
   const clipboard = document.getElementById('clipboard');
   clipboard.style.transition = `transform ${clipboardSlideDuration}ms ease-in`;
   clipboard.style.transform = "translateY(100vh)";
   setTimeout(callback, fadeDuration);
 }
+
+// Settings Modal and Restart functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const splashScreen = document.getElementById('splashScreen');
+  const victoryScreen = document.getElementById('victoryScreen');
+  const bgMusic = document.getElementById('bgMusic');
+  const settingsButton = document.getElementById('settingsButton');
+  const settingsModal = document.getElementById('settingsModal');
+  const saveSettings = document.getElementById('saveSettings');
+  const questionsInput = document.getElementById('questionsInput');
+  const endlessCheckbox = document.getElementById('endlessCheckbox');
+  const musicVolumeInput = document.getElementById('musicVolume');
+  const sfxVolumeInput = document.getElementById('sfxVolume');
+  const restartButton = document.getElementById('restartButton');
+
+  // Splash start
+  splashScreen.addEventListener("click", function() {
+    splashScreen.style.display = "none";
+    bgMusic.volume = musicVolume;
+    bgMusic.play();
+    startGame();
+  });
+  
+  // Victory restart via restart button
+  restartButton.addEventListener("click", function() {
+    victoryScreen.style.display = "none";
+    bgMusic.currentTime = 0;
+    bgMusic.volume = musicVolume;
+    bgMusic.play();
+    startGame();
+  });
+  
+  // Open settings modal
+  settingsButton.addEventListener("click", () => {
+    questionsInput.value = totalQuestions;
+    endlessCheckbox.checked = endlessMode;
+    questionsInput.disabled = endlessCheckbox.checked;
+    musicVolumeInput.value = musicVolume;
+    sfxVolumeInput.value = sfxVolume;
+    settingsModal.style.display = "flex";
+  });
+  
+  endlessCheckbox.addEventListener("change", () => {
+    questionsInput.disabled = endlessCheckbox.checked;
+  });
+  
+  saveSettings.addEventListener("click", () => {
+    totalQuestions = parseInt(questionsInput.value) || 5;
+    endlessMode = endlessCheckbox.checked;
+    musicVolume = parseFloat(musicVolumeInput.value);
+    sfxVolume = parseFloat(sfxVolumeInput.value);
+    bgMusic.volume = musicVolume;
+    settingsModal.style.display = "none";
+  });
+});
     </script>
   </body>
 </html>
