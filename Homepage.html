@@ -10,9 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@100..900&display=swap" rel="stylesheet">
 </head>
-<body style = "  background-image: url('images/bg.png');    
-  background-position: center center;font-family: fredoka;">
 
+<body style="background-image: url('images/bg.png'); background-position: center center; font-family: fredoka;">
   <div class="welcome"><img src="images/welcome.png"></div>
   
   <div class="carousel-container">
@@ -21,9 +20,7 @@
     
     <!-- Carousel Wrapper -->
     <div class="carousel">
-
       <!-- ALPHABET -->
-
       <div class="card-wrapper">
         <div class="shadow-card" style="background-color: coral;"></div>
         <div class="card" style="border-color: brown;">
@@ -38,7 +35,6 @@
       </div>
      
       <!-- NUMBERS -->
-
       <div class="card-wrapper">
         <div class="shadow-card" style="background-color: coral;"></div>
         <div class="card" style="border-color: brown;">
@@ -51,11 +47,8 @@
           <div class="start-button" style="background-color: coral; color: brown;" onclick="window.location.href='numbers.html';">Start</div>
         </div>
       </div>
-
-
       
       <!-- FEELINGS -->
-
       <div class="card-wrapper">
         <div class="shadow-card"></div>
         <div class="card">
@@ -69,53 +62,73 @@
         </div>
       </div>
 
-          <!-- COMMING SOON -->
-
-          <div class="card-wrapper" style = "opacity: 0.8;">
-            <div class="shadow-card" style = "background-color:rgb(62, 62, 62);"></div>
-            <div class="card" style = "border-color:rgb(62, 62, 62);background-color: rgb(141, 141, 141);">
-            <div class="card-content"> 
-              <div class="card-image">
-                <img src="images/1.png" alt="Card Image">
-              </div>  
-              <div class="card-title">comming soon...</div>
-            </div>
-              <div class="start-button" style="background-color: rgb(146, 146, 146); color: rgb(62, 62, 62);" onclick="startGame()">...</div>
-              
-              
+      <!-- SHAPES (with lock) -->
+      <div class="card-wrapper locked-card" data-category="shapes">
+        <div class="shadow-card" style="background-color:coral;"></div>
+        <div class="card" style="border-color:coral;border-color:brown;">
+          <div class="lock-overlay">
+            <img src="images/lock.png" alt="Locked" class="lock-icon">
           </div>
-        </div>
-
-        <div class="card-wrapper" style = "opacity: 0.8;">
-          <div class="shadow-card" style = "background-color:rgb(62, 62, 62) "></div>
-          <div class="card" style = "border-color:rgb(62, 62, 62);background-color: rgb(145, 145, 145);">
           <div class="card-content"> 
             <div class="card-image">
-              <img src="images/1.png" alt="Card Image">
+              <img src="images/home-card-shapes.png" alt="Card Image">
             </div>  
-            <div class="card-title">comming soon...</div>
+            <div class="card-title">Shapes</div>
           </div>
-            <div class="start-button" style="background-color: rgb(149, 149, 149); color:rgb(62, 62, 62);" onclick="startGame()">...</div>
-            
-            
+          <div class="start-button" style="background-color: coral; color: brown;">Start</div>
         </div>
       </div>
 
-        <!-- SHAPES -->
+      <!-- BODY PARTS (with lock) -->
+      <div class="card-wrapper locked-card" data-category="body-parts">
+        <div class="shadow-card"></div>
+        <div class="card">
+          <div class="lock-overlay">
+            <img src="images/lock.png" alt="Locked" class="lock-icon">
+          </div>
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-feelings.png" alt="Card Image">
+            </div>
+            <div class="card-title">Body Parts</div>
+          </div>
+          <div class="start-button">Start</div>
+        </div>
+      </div>
 
-  <div class="card-wrapper">
-    <div class="shadow-card" style = "background-color:coral;"></div>
-    <div class="card" style = "border-color:coral;border-color:brown;">
-    <div class="card-content"> 
-      <div class="card-image">
-        <img src="images/home-card-shapes.png" alt="Card Image">
-      </div>  
-      <div class="card-title">Shapes</div>
-    </div>
-    <body style="background-image: url('bg.png'); background-size: cover;">
-      <div class="start-button" style="background-color: coral; color: brown;" onclick="startGame()">Start</div>
-  </div>
-</div>
+      <!-- WEATHER (with lock) -->
+      <div class="card-wrapper locked-card" data-category="weather">
+        <div class="shadow-card"></div>
+        <div class="card">
+          <div class="lock-overlay">
+            <img src="images/lock.png" alt="Locked" class="lock-icon">
+          </div>
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-feelings.png" alt="Card Image">
+            </div>
+            <div class="card-title">Weather</div>
+          </div>
+          <div class="start-button">Start</div>
+        </div>
+      </div>
+
+      <!-- FAMILY MEMBERS (with lock) -->
+      <div class="card-wrapper locked-card" data-category="family">
+        <div class="shadow-card"></div>
+        <div class="card">
+          <div class="lock-overlay">
+            <img src="images/lock.png" alt="Locked" class="lock-icon">
+          </div>
+          <div class="card-content"> 
+            <div class="card-image">
+              <img src="images/home-card-feelings.png" alt="Card Image">
+            </div>
+            <div class="card-title">Family Members</div>
+          </div>
+          <div class="start-button">Start</div>
+        </div>
+      </div>
 
       <!-- ANIMALS -->
       <div class="card-wrapper">
@@ -130,14 +143,132 @@
           <div class="start-button" onclick="window.location.href='animals.html';">Start</div>
         </div>
       </div>
-      
-
     </div>
     <button id="nextBtn" class="nav-btn">Next</button>
   </div>
 
+  <!-- Pricing Modal -->
+  <!-- Pricing Modal -->
+<div class="pricing-modal" id="pricingModal">
+  <div class="pricing-container">
+    <button class="close-modal" onclick="closePricingModal()">×</button>
+    
+    <div class="pricing-card">
+      <div class="price">₱0</div>
+      <div class="plan-title">Free Plan</div>
+      <div class="features">Access to limited free games.</div>
+      <button class="pricing-btn free-btn" onclick="closePricingModal()">Play Now</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="price">₱150</div>
+      <div class="plan-title">Monthly Plan</div>
+      <div class="features">Unlimited access to all games for 1 month.</div>
+      <button class="pricing-btn buy-btn">Buy Now</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="badge">Most Popular</div>
+      <div class="price">₱1599</div>
+      <div class="old-price">₱1800</div>
+      <div class="highlight">Save 11%</div>
+      <div class="plan-title">Annual Plan</div>
+      <div class="features">Unlimited access to <strong>all games</strong> for 1 year.</div>
+      <button class="pricing-btn buy-btn">Buy Now</button>
+    </div>
+  </div>
+</div>
+
+  <!-- Scripts -->
   <script src="scripts/homejs.js"></script>
   <script src="Shape.js"></script>
+  <script>
+    // Handle locked cards
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add click event listeners to all locked cards
+      const lockedCards = document.querySelectorAll('.locked-card');
+      
+      lockedCards.forEach(card => {
+        card.addEventListener('click', function() {
+          showPricingModal();
+        });
+      });
+    });
+
+    // Show the pricing modal
+    function showPricingModal() {
+      const modal = document.getElementById('pricingModal');
+      modal.style.display = 'flex';
+      
+      // Add an event listener to close the modal when clicking outside
+      modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          closePricingModal();
+        }
+      });
+      
+      // Trigger animation after a small delay to ensure display change is applied
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 10);
+    }
+
+    // Close the pricing modal
+    function closePricingModal() {
+      const modal = document.getElementById('pricingModal');
+      modal.classList.remove('show');
+      
+      // Wait for the animation to complete before hiding the modal
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 500);
+    }
+
+    // Original startGame function - make sure it's not triggered for locked cards
+    function startGame() {
+      // Check if the parent card wrapper has the locked-card class
+      const cardElement = event.target.closest('.card-wrapper');
+      if (!cardElement.classList.contains('locked-card')) {
+        window.location.href = 'shapes.html';
+      }
+    }
+
+    // Add lock functionality to the specified cards
+    function setupLockedCards() {
+      // Find the cards with specific categories and add lock overlay
+      const targetCategories = ['Shapes', 'Body Parts', 'Weather', 'Family Members'];
+      
+      const cards = document.querySelectorAll('.card-wrapper');
+      cards.forEach(card => {
+        const titleElement = card.querySelector('.card-title');
+        if (titleElement && targetCategories.includes(titleElement.textContent.trim())) {
+          // Add locked-card class
+          card.classList.add('locked-card');
+          
+          // Create and add the lock overlay
+          const cardElement = card.querySelector('.card');
+          const lockOverlay = document.createElement('div');
+          lockOverlay.className = 'lock-overlay';
+          
+          const lockIcon = document.createElement('img');
+          lockIcon.src = 'images/lock.png';
+          lockIcon.alt = 'Locked';
+          lockIcon.className = 'lock-icon';
+          
+          lockOverlay.appendChild(lockIcon);
+          cardElement.appendChild(lockOverlay);
+          
+          // Disable the start button
+          const startButton = card.querySelector('.start-button');
+          if (startButton) {
+            startButton.removeAttribute('onclick');
+          }
+        }
+      });
+    }
+
+    // Call the setup function when the document is loaded
+    document.addEventListener('DOMContentLoaded', setupLockedCards);
+  </script>
 </body>
 </html>
-
